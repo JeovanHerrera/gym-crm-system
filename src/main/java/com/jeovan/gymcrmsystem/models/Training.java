@@ -1,14 +1,23 @@
 package com.jeovan.gymcrmsystem.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Date;
 import java.util.UUID;
 
-public class Training {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Training implements SimpleInterface{
     private UUID id;
     private Date trainingDate;
     private String trainingName;
-    private Trainee trainee;
-    private Trainer trainer;
-    private TrainingType specialization;
+    private UUID traineeId;
+    private UUID trainerId;
+    private UUID specializationId;
     private Long trainingDuration;
 }
