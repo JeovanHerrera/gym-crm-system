@@ -1,13 +1,24 @@
 package com.jeovan.gymcrmsystem;
 
+import com.jeovan.gymcrmsystem.facade.FacadeApp;
+import com.jeovan.gymcrmsystem.models.Trainee;
+import com.jeovan.gymcrmsystem.models.User;
+import com.jeovan.gymcrmsystem.services.TraineeServiceImpl;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.UUID;
 
 @SpringBootApplication
 public class GymCrmSystemApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(GymCrmSystemApplication.class, args);
+		ApplicationContext context = SpringApplication.run(GymCrmSystemApplication.class, args);
+		FacadeApp facadeApp = (FacadeApp) context.getBean("facadeApp");
+		facadeApp.run();
 	}
 
 }

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "3a124567-890b-cdef-1234-567890abcdef",
+    "trainingTypeName": "Strength Training"
+  },
+  {
+    "id": "7b2c3d4e-5f6g-7h8i-9j0k-1l2m3n4o5p6q",
+    "trainingTypeName": "Cardio Training"
+  },
+  {
+    "id": "f89a0b1c-2d3e-4f5g-6h7i-8j9k0l1m2n3o",
+    "trainingTypeName": "Flexibility Training"
+  }
+]

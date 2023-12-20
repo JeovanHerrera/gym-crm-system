@@ -1,0 +1,73 @@
+{
+  "Trainee": [
+    {
+      "id": "1906d765-0df2-4c7b-8225-02f067830216",
+      "dateOfBirth": "1990-01-01",
+      "address": "123 Main Street, Anytown, USA",
+      "userId": "52d1e3a7-2c1b-4805-95d8-200c588f2231"
+    },
+    {
+      "id": "a529834e-63a1-48f0-84f0-9260d5136d06",
+      "dateOfBirth": "1995-07-15",
+      "address": "456 Elm Street, Springfield, CA",
+      "userId": "b74a187c-1351-47d5-98df-e06732a18427"
+    },
+    {
+      "id": "723eb451-76fa-462f-9311-95fa877d064e",
+      "dateOfBirth": "2000-10-23",
+      "address": "789 Oak Avenue, New York, NY",
+      "userId": "3c762f1a-634b-4b28-a513-7f254938bd82"
+    }
+  ],
+  "Trainer": [
+    {
+      "id": "d7134b25-e365-444b-9482-7c05a19775df",
+      "userId": "3c762f1a-634b-4b28-a513-7f254938bd82",
+      "specializationId": "1906d765-0df2-4c7b-8225-02f067830216"
+    },
+    {
+      "id": "f2b7639c-42ab-40c0-a1ab-8e8633028b09",
+      "userId": "b74a187c-1351-47d5-98df-e06732a18427",
+      "specializationId": "a529834e-63a1-48f0-84f0-9260d5136d06"
+    }
+  ],
+  "Training": [
+    {
+      "id": "82ca3df6-c722-47a0-93d0-a2456172975b",
+      "trainingDate": "2023-12-17",
+      "trainingName": "Strength & Cardio Blast",
+      "traineeId": "1906d765-0df2-4c7b-8225-02f067830216",
+      "trainerId": "d7134b25-e365-444b-9482-7c05a19775df",
+      "specializationId": "1906d765-0df2-4c7b-8225-02f067830216",
+      "trainingDuration": 60
+    },
+    {
+      "id": "148b25a3-372f-4466-8919-8f01423b0891",
+      "trainingDate": "2023-12-18",
+      "trainingName": "Flexibility Focus",
+      "traineeId": "a529834e-63a1-48f0-84f0-9260d5136d06",
+      "trainerId": "f2b7639c-42ab-40c0-a1ab-8e8633028b09",
+      "specializationId": "263d5f09-37c7-4198-9f70-d0905685e199",
+      "trainingDuration": 45
+    },
+    {
+      "id": "e154ac92-c815-419b-adb8-78e96925d38b",
+      "trainingDate": "2023-12-19",
+      "trainingName": "Cardio Bootcamp",
+      "traineeId": "723eb451-76fa-462f-9311-95fa877d064e",
+      "trainerId": "f2b7639c-42ab-40c0-a1ab-8e8633028b09",
+      "specializationId": "263d5f09-37c7-4198-9f70-d0905685e199",
+      "trainingDuration": 75
+    },
+    {
+      "id": "bfdb20cf-5f8d-4160-95fc-b0cd347140aa",
+      "trainingDate": "2023-12-20",
+      "trainingName": "Strength & Conditioning",
+      "traineeId": "723eb451-76fa-462f-9311-95fa877d064e",
+      "trainerId": "d7134b25-e365-444b-9482-7c05a19775df",
+      "specializationId": "599285b3-7754-4057-8e87-0bf95206fa08",
+      "trainingDuration": 90
+    }
+  ]
+}
+
