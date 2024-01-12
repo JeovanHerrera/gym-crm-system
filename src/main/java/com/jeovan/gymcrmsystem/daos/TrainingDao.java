@@ -3,11 +3,12 @@ package com.jeovan.gymcrmsystem.daos;
 import com.jeovan.gymcrmsystem.models.Training;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class TrainingDao extends SimpleDao<Training>{
-    public TrainingDao(List<Training> storage) {
+    public TrainingDao(Map<UUID, Training> storage) {
         super(storage);
     }
 }

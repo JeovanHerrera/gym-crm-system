@@ -8,21 +8,18 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Getter
 @Setter
 public class InMemoryStorage {
-    private Map<String, List<? extends SimpleInterface>> storage;
+private Map<String, Map<UUID, ? extends SimpleInterface>> storage;
     public InMemoryStorage() {
         this.storage = new HashMap<>();
-        storage.put("Trainee", new ArrayList<Trainee>());
-        storage.put("Trainer", new ArrayList<Trainer>());
-        storage.put("Training", new ArrayList<Training>());
+        storage.put("Trainee", new HashMap<UUID, Trainee>());
+        storage.put("Trainer", new HashMap<UUID, Trainer>());
+        storage.put("Training", new HashMap<UUID, Training>());
     }
 
 }

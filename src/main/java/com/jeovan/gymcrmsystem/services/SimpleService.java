@@ -1,10 +1,11 @@
 package com.jeovan.gymcrmsystem.services;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public interface SimpleService<T> {
-    List<T> getAll();
+    Map<UUID, T> getAll();
 
     T create(T t);
 

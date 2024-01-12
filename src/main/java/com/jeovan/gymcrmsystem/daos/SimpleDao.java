@@ -3,47 +3,48 @@ package com.jeovan.gymcrmsystem.daos;
 import com.jeovan.gymcrmsystem.models.SimpleInterface;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 public abstract class SimpleDao<T extends SimpleInterface> implements DaoInterface<T>{
-    protected List<T> storage;
+    protected Map<UUID, T> storage;
 
-    public SimpleDao(List<T> storage) {
+    public SimpleDao(Map<UUID, T> storage) {
         this.storage = storage;
     }
 
     @Override
-    public List<T> getAll(String entity) {
+    public Map<UUID, T> getAll(String entity) {
         return storage;
     }
 
     @Override
     public Optional<T> getById(UUID id){
-        return Optional.ofNullable(storage.stream().filter(entity -> entity.getId().equals(id)).toList().get(0));
+        return Optional.ofNullable(storage.get(id));
     }
 
     @Override
     public T save(T entity) {
-        storage.add(entity);
+        storage.put(entity.getId(), entity);
         return entity;
     }
 
     @Override
     public T delete(T entity) {
-        storage.remove(entity);
+        storage.remove(entity.getId());
         return entity;
     }
 
     @Override
     public T update(T entity){
         Optional<? extends SimpleInterface> userToBeUpdated = getById(entity.getId());
-        userToBeUpdated.ifPresent(storage::remove);
-        storage.add(entity);
+        userToBeUpdated.ifPresent((entityToUpdate) -> storage.remove(entityToUpdate.getId()));
+        storage.put(entity.getId(), entity);
         return entity;
     }
 
-    public void setStorage(List<T> storage) {
+    public void setStorage(Map<UUID, T> storage) {
         this.storage = storage;
     }
 }

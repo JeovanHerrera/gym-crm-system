@@ -7,10 +7,8 @@ import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.Training;
 import org.springframework.beans.factory.BeanCreationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -21,7 +19,7 @@ public class DataLoading implements BeanPostProcessor {
     private ObjectMapper objectMapper;
     private final String dataFilePath;
 
-    private Map<String, List<? extends SimpleInterface>> storageMap;
+    private Map<String, Map<UUID, ? extends SimpleInterface>> storageMap;
 
     public DataLoading(@Value("${data.file.path}") String dataFilePath) {
         this.dataFilePath = dataFilePath;
@@ -33,10 +31,10 @@ public class DataLoading implements BeanPostProcessor {
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeanCreationException {
         if (bean.getClass().equals(InMemoryStorage.class)) {
             try {
-                Map<String,List<Object>> dataList = objectMapper.readValue(new File(dataFilePath), new TypeReference<Map<String,List<Object>>>() {});
-                List<Trainer> trainers = objectMapper.convertValue(dataList.get("Trainer"), new TypeReference<List<Trainer>>() {});
-                List<Trainee> trainees = objectMapper.convertValue(dataList.get("Trainee"), new TypeReference<List<Trainee>>() {});
-                List<Training> trainings = objectMapper.convertValue(dataList.get("Training"), new TypeReference<List<Training>>() {});
+                Map<String,Map<UUID, Object>> dataList = objectMapper.readValue(new File(dataFilePath), new TypeReference<Map<String,Map<UUID, Object>>>() {});
+                Map<UUID, Trainer> trainers = objectMapper.convertValue(dataList.get("Trainer"), new TypeReference<Map<UUID, Trainer>>() {});
+                Map<UUID, Trainee> trainees = objectMapper.convertValue(dataList.get("Trainee"), new TypeReference<Map<UUID, Trainee>>() {});
+                Map<UUID, Training> trainings = objectMapper.convertValue(dataList.get("Training"), new TypeReference<Map<UUID, Training>>() {});
                 populateStorage(trainers, "Trainer");
                 populateStorage(trainees, "Trainee");
                 populateStorage(trainings, "Training");
@@ -48,7 +46,7 @@ public class DataLoading implements BeanPostProcessor {
         return bean;
     }
 
-    private void populateStorage(List<? extends SimpleInterface> entities, String namespace) {
+    private void populateStorage(Map<UUID, ? extends SimpleInterface> entities, String namespace) {
         storageMap.put(namespace, entities);
 
     }

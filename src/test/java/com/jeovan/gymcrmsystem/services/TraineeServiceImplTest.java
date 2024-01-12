@@ -26,7 +26,7 @@ class TraineeServiceImplTest {
     private static final UUID uuid2 = UUID.fromString("5ab5de9f-dcc2-4677-9457-c63686236f97");
     private static final Trainee trainee1 = new Trainee(uuid2, Date.from(Instant.now()), "Street 1st #2-34", uuid1);
 
-    public Map<String, List<? extends SimpleInterface>> storage = new HashMap<>();
+    public Map<String, Map<UUID, ? extends SimpleInterface>> storage = new HashMap<>();
 
     InMemoryStorage inMemoryStorage = mock(InMemoryStorage.class);
     @Mock
@@ -46,7 +46,7 @@ class TraineeServiceImplTest {
 
     @Test
     void testGetAll() {
-        List<Trainee> expectedTrainees = Arrays.asList(new Trainee(), new Trainee());
+        Map<UUID, Trainee> expectedTrainees = Map.of(uuid1, new Trainee(), uuid2, new Trainee());
         when(mockDao.getAll(any(String.class))).thenReturn(expectedTrainees);
         assertEquals(expectedTrainees, service.getAll());
     }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -20,10 +21,10 @@ public class TrainingServiceImpl implements TrainingService{
 
     @Override
     public void setTrainingService() {
-        trainingDao.setStorage((List<Training>) inMemoryStorage.getStorage().get("Training"));
+        trainingDao.setStorage((Map<UUID, Training>) inMemoryStorage.getStorage().get("Training"));
     }
     @Override
-    public List<Training> getAll() {
+    public Map<UUID, Training> getAll() {
         return trainingDao.getAll(Training.class.getName());
     }
 

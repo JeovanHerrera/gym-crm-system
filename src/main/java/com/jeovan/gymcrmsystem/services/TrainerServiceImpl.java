@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -20,11 +21,11 @@ public class TrainerServiceImpl implements TrainerService{
 
     @Override
     public void setTrainerService() {
-        trainerDao.setStorage((List<Trainer>) inMemoryStorage.getStorage().get("Trainer"));
+        trainerDao.setStorage((Map<UUID, Trainer>) inMemoryStorage.getStorage().get("Trainer"));
     }
 
     @Override
-    public List<Trainer> getAll() {
+    public Map<UUID, Trainer> getAll() {
         return trainerDao.getAll(Trainer.class.getName());
     }
 
