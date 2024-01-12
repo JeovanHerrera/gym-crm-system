@@ -1,10 +1,7 @@
 package com.jeovan.gymcrmsystem.facade;
 
 import com.jeovan.gymcrmsystem.models.Trainee;
-import com.jeovan.gymcrmsystem.services.TraineeService;
-import com.jeovan.gymcrmsystem.services.TraineeServiceImpl;
-import com.jeovan.gymcrmsystem.services.TrainerServiceImpl;
-import com.jeovan.gymcrmsystem.services.TrainingServiceImpl;
+import com.jeovan.gymcrmsystem.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,20 +12,20 @@ import java.util.UUID;
 @Component
 public class FacadeApp {
 
-    private final TraineeServiceImpl traineeService;
-    private final TrainerServiceImpl trainerService;
-    private final TrainingServiceImpl trainingService;
+    private final TraineeService traineeService;
+    private final TrainerService trainerService;
+    private final TrainingService trainingService;
 
-    public FacadeApp(TraineeServiceImpl traineeService, TrainerServiceImpl trainerService, TrainingServiceImpl trainingService) {
+    public FacadeApp(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
     }
 
     public void run(){
-        traineeService.setTraineeServiceImpl();
-        trainerService.setTrainerServiceImpl();
-        trainingService.setTrainingServiceImpl();
+        traineeService.setTraineeService();
+        trainerService.setTrainerService();
+        trainingService.setTrainingService();
 
         final UUID uuid1 = UUID.fromString("983ffb47-5118-40df-b38b-a6604b44555d");
         final UUID uuid2 = UUID.fromString("5ab5de9f-dcc2-4677-9457-c63686236f97");

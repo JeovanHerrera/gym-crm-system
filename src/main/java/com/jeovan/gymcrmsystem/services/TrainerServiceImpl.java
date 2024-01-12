@@ -18,7 +18,8 @@ public class TrainerServiceImpl implements TrainerService{
     @Autowired
     private TrainerDao trainerDao;
 
-    public void setTrainerServiceImpl() {
+    @Override
+    public void setTrainerService() {
         trainerDao.setStorage((List<Trainer>) inMemoryStorage.getStorage().get("Trainer"));
     }
 

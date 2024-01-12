@@ -17,7 +17,8 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     private TraineeDao traineeDao;
 
-    public void setTraineeServiceImpl() {
+    @Override
+    public void setTraineeService() {
         traineeDao.setStorage((List<Trainee>) inMemoryStorage.getStorage().get("Trainee"));
     }
 

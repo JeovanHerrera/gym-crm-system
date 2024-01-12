@@ -37,7 +37,7 @@ class TraineeServiceImplTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        service.setTraineeServiceImpl();
+        service.setTraineeService();
     }
 
     @AfterEach

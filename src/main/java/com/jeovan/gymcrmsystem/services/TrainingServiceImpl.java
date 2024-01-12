@@ -18,7 +18,8 @@ public class TrainingServiceImpl implements TrainingService{
     @Autowired
     private TrainingDao trainingDao;
 
-    public void setTrainingServiceImpl() {
+    @Override
+    public void setTrainingService() {
         trainingDao.setStorage((List<Training>) inMemoryStorage.getStorage().get("Training"));
     }
     @Override
