@@ -25,7 +25,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     public Map<UUID, Trainee> getAll() {
-        return traineeDao.getAll(Trainee.class.getName());
+        return traineeDao.getAll(Trainee.class.getSimpleName());
     }
 
     @Override

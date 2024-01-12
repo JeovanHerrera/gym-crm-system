@@ -26,7 +26,7 @@ public class TrainerServiceImpl implements TrainerService{
 
     @Override
     public Map<UUID, Trainer> getAll() {
-        return trainerDao.getAll(Trainer.class.getName());
+        return trainerDao.getAll(Trainer.class.getSimpleName());
     }
 
     @Override
