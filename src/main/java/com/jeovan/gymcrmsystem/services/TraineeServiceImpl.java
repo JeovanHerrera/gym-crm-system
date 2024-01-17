@@ -2,49 +2,53 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TraineeDao;
 import com.jeovan.gymcrmsystem.models.Trainee;
-import com.jeovan.gymcrmsystem.storage.InMemoryStorage;
+import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
 public class TraineeServiceImpl implements TraineeService {
     @Autowired
-    private InMemoryStorage inMemoryStorage;
+    private TraineeDao traineeDao;
+    @Autowired
+    private CredentialGeneratorServiceImpl credentialGeneratorService;
 
     @Autowired
-    private TraineeDao traineeDao;
+    private PasswordEncoder passwordEncoder;
 
     @Override
-    public void setTraineeService() {
-        traineeDao.setStorage((Map<UUID, Trainee>) inMemoryStorage.getStorage().get("Trainee"));
-    }
-
-    @Override
-    public Map<UUID, Trainee> getAll() {
-        return traineeDao.getAll(Trainee.class.getSimpleName());
+    public List<Trainee> getAll() {
+        return traineeDao.findAll();
     }
 
     @Override
     public Trainee create(Trainee trainee) {
+        User user = trainee.getUser();
+        user.setUsername(credentialGeneratorService.generateUsername(user.getFirstName(), user.getLastName()));
+        user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
         return traineeDao.save(trainee);
     }
 
     @Override
     public Trainee update(Trainee trainee) {
-        return traineeDao.update(trainee);
+        return traineeDao.save(trainee);
     }
 
     @Override
     public Trainee select(UUID id) {
-        return traineeDao.getById(id).get();
+        return traineeDao.findById(id).get();
+    }
+
+    public Trainee selectByUsername(String username) {
+        return traineeDao.findByUsername(username).get();
     }
 
     @Override
-    public Trainee delete(Trainee trainee) {
-        return traineeDao.delete(trainee);
+    public void delete(Trainee trainee) {
+        traineeDao.delete(trainee);
     }
 }
