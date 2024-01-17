@@ -1,11 +1,7 @@
 package com.jeovan.gymcrmsystem.models;
 
-
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -13,11 +9,18 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
+@Entity
 public class User implements SimpleInterface{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    @Column(nullable = false)
     private String firstName;
     private String lastName;
+    @Column(unique = true)
+    private String username;
     private String password;
     private Boolean isActive;
 }

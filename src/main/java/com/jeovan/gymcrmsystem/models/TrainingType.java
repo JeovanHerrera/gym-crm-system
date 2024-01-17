@@ -1,5 +1,7 @@
 package com.jeovan.gymcrmsystem.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +13,9 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class TrainingType implements SimpleInterface{
+    @Id
     private UUID id;
     private String trainingTypeName;
 }
