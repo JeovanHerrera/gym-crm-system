@@ -1,9 +1,6 @@
 package com.jeovan.gymcrmsystem.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -19,9 +16,14 @@ import java.util.UUID;
 public class Trainer implements SimpleInterface{
     @Id
     private UUID id;
+
     @OneToOne
     @Cascade(CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    private UUID specializationId;
+
+    @ManyToOne
+    @Cascade(CascadeType.ALL)
+    @JoinColumn(name = "training_type_id", nullable = false)
+    private TrainingType trainingTypeId;
 }

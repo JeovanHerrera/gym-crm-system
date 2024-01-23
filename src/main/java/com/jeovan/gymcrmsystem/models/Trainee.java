@@ -20,8 +20,9 @@ public class Trainee implements SimpleInterface{
     private UUID id;
     private Date dateOfBirth;
     private String address;
-    @OneToOne
-    @Cascade(CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+
+    @OneToOne(orphanRemoval = true)
+    @Cascade({CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

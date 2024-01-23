@@ -1,5 +1,6 @@
 package com.jeovan.gymcrmsystem.models;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -17,5 +18,6 @@ import java.util.UUID;
 public class TrainingType implements SimpleInterface{
     @Id
     private UUID id;
+    @Column(nullable = false)
     private String trainingTypeName;
 }
