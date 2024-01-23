@@ -16,10 +16,13 @@ public class FacadeApp {
     private final TrainerService trainerService;
     private final TrainingService trainingService;
 
-    public FacadeApp(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService) {
+    private final AuthenticationService authenticationService;
+
+    public FacadeApp(TraineeService traineeService, TrainerService trainerService, TrainingService trainingService, AuthenticationService authenticationService) {
         this.traineeService = traineeService;
         this.trainerService = trainerService;
         this.trainingService = trainingService;
+        this.authenticationService = authenticationService;
     }
 
     public void run(){
@@ -30,11 +33,17 @@ public class FacadeApp {
         user.setFirstName("Jeovan");
         user.setLastName("Herrera");
         user.setUsername("jeovanis.herrera");
+        user.setIsActive(true);
         Trainee trainee1 = new Trainee();
         trainee1.setDateOfBirth(Date.from(Instant.now()));
         trainee1.setAddress("Street 1st #2-34");
         trainee1.setUser(user);
-        traineeService.create(trainee1);
-        System.out.println(traineeService.selectByUsername("jeovan.herrera").toString());
+        trainee1 = traineeService.create(trainee1);
+        user.setFirstName("Jeovanis44444");
+        trainee1.setUser(user);
+        authenticationService.authenticateUser("jeovan.herrera1", "sBNyw;Xro`");
+        traineeService.update(trainee1);
+        traineeService.deleteByUsername("jeovan.herrera12345");
+        //System.out.println(traineeService.selectByUsername("jeovan.herrera").toString());
     }
 }

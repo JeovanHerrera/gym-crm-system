@@ -41,4 +41,14 @@ public class TrainingServiceImpl implements TrainingService{
     @Override
     public void delete(Training training) {
     }
+
+    @Override
+    public Training selectByUsername(String username) {
+        return null;
+    }
+
+    @Override
+    public void deleteByUsername(String username) {
+
+    }
 }
