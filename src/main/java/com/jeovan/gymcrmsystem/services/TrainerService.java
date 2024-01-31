@@ -2,6 +2,6 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.models.Trainer;
 
-public interface TrainerService extends SimpleService<Trainer> {
+public interface TrainerService extends SimpleService<Trainer>, ModifyService<Trainer>, UserAuxService<Trainer> {
 
 }

@@ -1,12 +1,14 @@
 package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainingDao;
+import com.jeovan.gymcrmsystem.daos.TrainingTypeDao;
 import com.jeovan.gymcrmsystem.models.Training;
 import com.jeovan.gymcrmsystem.storage.InMemoryStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -17,6 +19,8 @@ public class TrainingServiceImpl implements TrainingService{
 
     @Autowired
     private TrainingDao trainingDao;
+    @Autowired
+    private TrainingTypeDao trainingTypeDao;
 
     @Override
     public List<Training> getAll() {
@@ -25,12 +29,8 @@ public class TrainingServiceImpl implements TrainingService{
 
     @Override
     public Training create(Training training) {
+        training.setTrainingType(trainingTypeDao.findByTrainingTypeName(training.getTrainingType().getTrainingTypeName()).get());
         return trainingDao.save(training);
-    }
-
-    @Override
-    public Training update(Training training) {
-        return null;
     }
 
     @Override
@@ -39,16 +39,7 @@ public class TrainingServiceImpl implements TrainingService{
     }
 
     @Override
-    public void delete(Training training) {
-    }
-
-    @Override
-    public Training selectByUsername(String username) {
-        return null;
-    }
-
-    @Override
-    public void deleteByUsername(String username) {
-
+    public List<Training> getByUsernameAndCriteria(String username, Map<String, String> criteria) {
+        return trainingDao.getByUsernameAndCriteria(username, criteria);
     }
 }

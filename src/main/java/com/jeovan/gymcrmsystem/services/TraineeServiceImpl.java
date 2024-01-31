@@ -2,17 +2,9 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TraineeDao;
 import com.jeovan.gymcrmsystem.models.Trainee;
-import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,11 +46,13 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeDao.findById(id).get();
     }
 
+    @Override
     @Secured("ADMIN")
     public Trainee selectByUsername(String username) {
-        return traineeDao.findByUsername(username).get();
+        return traineeDao.findByUserUsername(username).get();
     }
 
+    @Override
     @Secured("ADMIN")
     public Trainee updatePassword(String username){
         Trainee trainee = selectByUsername(username);
@@ -67,6 +61,7 @@ public class TraineeServiceImpl implements TraineeService {
         return traineeDao.save(trainee);
     }
 
+    @Override
     @Secured("ADMIN")
     public Trainee toggleActiveStatus(String username){
         Trainee trainee = selectByUsername(username);
@@ -86,7 +81,7 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Secured("ADMIN")
     public void deleteByUsername(String username) {
-        traineeDao.deleteByUsername(username);
+        traineeDao.deleteByUserUsername(username);
     }
 
 }

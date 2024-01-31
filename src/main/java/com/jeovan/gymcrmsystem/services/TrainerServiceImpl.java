@@ -1,7 +1,7 @@
 package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainerDao;
-import com.jeovan.gymcrmsystem.models.Trainee;
+import com.jeovan.gymcrmsystem.daos.TrainingTypeDao;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,8 @@ public class TrainerServiceImpl implements TrainerService{
     @Autowired
     private TrainerDao trainerDao;
     @Autowired
+    private TrainingTypeDao trainingTypeDao;
+    @Autowired
     private CredentialGeneratorServiceImpl credentialGeneratorService;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -29,6 +31,7 @@ public class TrainerServiceImpl implements TrainerService{
 
     @Override
     public Trainer create(Trainer trainer) {
+        trainer.setTrainingType(trainingTypeDao.findByTrainingTypeName(trainer.getTrainingType().getTrainingTypeName()).get());
         User user = trainer.getUser();
         user.setUsername(credentialGeneratorService.generateUsername(user.getFirstName(), user.getLastName()));
         user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
@@ -47,16 +50,19 @@ public class TrainerServiceImpl implements TrainerService{
         return trainerDao.findById(id).get();
     }
 
+    @Override
     @Secured("ADMIN")
     public Trainer selectByUsername(String username) {
-        return trainerDao.findByUsername(username).get();
+        return trainerDao.findByUserUsername(username).get();
     }
 
     @Override
+    @Secured("ADMIN")
     public void deleteByUsername(String username) {
-        trainerDao.deleteByUsername(username);
+        trainerDao.deleteByUserUsername(username);
     }
 
+    @Override
     @Secured("ADMIN")
     public Trainer updatePassword(String username){
         Trainer trainer = selectByUsername(username);
@@ -64,6 +70,7 @@ public class TrainerServiceImpl implements TrainerService{
         user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
         return trainerDao.save(trainer);
     }
+    @Override
     @Secured("ADMIN")
     public Trainer toggleActiveStatus(String username){
         Trainer trainer = selectByUsername(username);
