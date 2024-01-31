@@ -12,11 +12,7 @@ import java.util.UUID;
 
 @Component
 public interface TrainerDao extends JpaRepository<Trainer, UUID> {
-    @Query("SELECT t FROM Trainer t JOIN t.user u WHERE u.username = ?1")
-    Optional<Trainer> findByUsername(String username);
-
-    @Modifying
+    Optional<Trainer> findByUserUsername(String username);
     @Transactional
-    @Query("DELETE FROM Trainer t WHERE EXISTS (SELECT 1 FROM User u WHERE u.username = ?1 AND u = t.user)")
-    int deleteByUsername(String username);
+    int deleteByUserUsername(String username);
 }

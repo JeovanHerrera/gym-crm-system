@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public interface TrainingDao  extends JpaRepository<Training, UUID> {
+public interface TrainingDao  extends JpaRepository<Training, UUID>, TrainingDaoCustom {
 
 }
