@@ -1,13 +1,12 @@
 package com.jeovan.gymcrmsystem.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -17,7 +16,12 @@ import java.util.UUID;
 @Entity
 public class TrainingType implements SimpleInterface{
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String trainingTypeName;
+
+    @OneToMany(mappedBy = "trainingType")
+    private List<Trainer> trainers;
 }

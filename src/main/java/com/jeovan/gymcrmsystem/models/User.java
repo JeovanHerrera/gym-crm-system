@@ -1,6 +1,8 @@
 package com.jeovan.gymcrmsystem.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.UUID;
@@ -18,6 +20,8 @@ public class User implements SimpleInterface{
     private UUID id;
 
     @Column(nullable = false)
+    @NotBlank
+    @NotNull(message = "name null")
     private String firstName;
 
     @Column(nullable = false)
