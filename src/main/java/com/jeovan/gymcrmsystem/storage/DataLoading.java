@@ -29,7 +29,7 @@ public class DataLoading implements BeanPostProcessor {
 
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeanCreationException {
-        if (bean.getClass().equals(InMemoryStorage.class)) {
+      /*  if (bean.getClass().equals(InMemoryStorage.class)) {
             try {
                 Map<String,Map<UUID, Object>> dataList = objectMapper.readValue(new File(dataFilePath), new TypeReference<Map<String,Map<UUID, Object>>>() {});
                 Map<UUID, Trainer> trainers = objectMapper.convertValue(dataList.get("Trainer"), new TypeReference<Map<UUID, Trainer>>() {});
@@ -42,7 +42,7 @@ public class DataLoading implements BeanPostProcessor {
             } catch (Exception e) {
                 throw new BeanCreationException("Error initializing storage with data", e);
             }
-        }
+        }*/
         return bean;
     }
 

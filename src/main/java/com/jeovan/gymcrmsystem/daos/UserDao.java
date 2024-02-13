@@ -1,15 +1,13 @@
 package com.jeovan.gymcrmsystem.daos;
 
 import com.jeovan.gymcrmsystem.models.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Component
-public class UserDao extends SimpleDao<User>{
-
-    public UserDao(Map<UUID, User> storage) {
-        super(storage);
-    }
+public interface UserDao extends JpaRepository<User, UUID> {
+    Optional<User> findByUsername(String username);
 }
