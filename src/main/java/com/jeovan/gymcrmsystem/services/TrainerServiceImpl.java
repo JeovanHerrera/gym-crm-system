@@ -2,6 +2,7 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainerDao;
 import com.jeovan.gymcrmsystem.daos.TrainingTypeDao;
+import com.jeovan.gymcrmsystem.helpers.responses.Credentials;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,11 @@ public class TrainerServiceImpl implements TrainerService{
         trainer.setTrainingType(trainingTypeDao.findByTrainingTypeName(trainer.getTrainingType().getTrainingTypeName()).get());
         User user = trainer.getUser();
         user.setUsername(credentialGeneratorService.generateUsername(user.getFirstName(), user.getLastName()));
-        user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
-        return trainerDao.save(trainer);
+        String password = credentialGeneratorService.generatePassword();
+        user.setPassword(passwordEncoder.encode(password));
+        trainer = trainerDao.save(trainer);
+        trainer.getUser().setPassword(password);
+        return trainer;
     }
 
     @Override
@@ -64,8 +68,8 @@ public class TrainerServiceImpl implements TrainerService{
 
     @Override
     @Secured("ADMIN")
-    public Trainer updatePassword(String username){
-        Trainer trainer = selectByUsername(username);
+    public Trainer updatePassword(Credentials credentials){
+        Trainer trainer = selectByUsername(credentials.getUsername());
         User user = trainer.getUser();
         user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
         return trainerDao.save(trainer);

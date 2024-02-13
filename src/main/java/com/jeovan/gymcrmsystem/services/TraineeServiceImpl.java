@@ -1,6 +1,7 @@
 package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TraineeDao;
+import com.jeovan.gymcrmsystem.helpers.responses.Credentials;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,11 @@ public class TraineeServiceImpl implements TraineeService {
     public Trainee create(Trainee trainee) {
         User user = trainee.getUser();
         user.setUsername(credentialGeneratorService.generateUsername(user.getFirstName(), user.getLastName()));
-        user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
-        return traineeDao.save(trainee);
+        String password = credentialGeneratorService.generatePassword();
+        user.setPassword(passwordEncoder.encode(password));
+        trainee = traineeDao.save(trainee);
+        trainee.getUser().setPassword(password);
+        return trainee;
     }
 
     @Override
@@ -47,18 +51,21 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    @Secured("ADMIN")
+    //@Secured("ADMIN")
     public Trainee selectByUsername(String username) {
         return traineeDao.findByUserUsername(username).get();
     }
 
     @Override
-    @Secured("ADMIN")
-    public Trainee updatePassword(String username){
-        Trainee trainee = selectByUsername(username);
+    //@Secured("ADMIN")
+    public Trainee updatePassword(Credentials credentials){
+        Trainee trainee = selectByUsername(credentials.getUsername());
         User user = trainee.getUser();
-        user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
-        return traineeDao.save(trainee);
+        if(passwordEncoder.matches(credentials.getPassword(), user.getPassword())){
+            user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
+            return traineeDao.save(trainee);
+        }
+        return null;
     }
 
     @Override

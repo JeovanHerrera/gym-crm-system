@@ -1,5 +1,6 @@
 package com.jeovan.gymcrmsystem.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class TrainingType implements SimpleInterface{
+public class TrainingType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;

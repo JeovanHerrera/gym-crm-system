@@ -19,7 +19,7 @@ private Map<String, Map<UUID, ? extends SimpleInterface>> storage;
         this.storage = new HashMap<>();
         storage.put("Trainee", new HashMap<UUID, Trainee>());
         storage.put("Trainer", new HashMap<UUID, Trainer>());
-        storage.put("Training", new HashMap<UUID, Training>());
+        //storage.put("Training", new HashMap<UUID, Training>());
     }
 
 }

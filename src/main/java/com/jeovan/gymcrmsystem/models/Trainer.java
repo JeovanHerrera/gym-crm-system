@@ -1,5 +1,6 @@
 package com.jeovan.gymcrmsystem.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
@@ -28,6 +29,7 @@ public class Trainer implements SimpleInterface{
     private User user;
 
     @OneToMany(mappedBy = "trainer")
+    @JsonManagedReference(value = "trainer")
     private List<Training> trainings;
 
     @ManyToMany(mappedBy = "trainers")

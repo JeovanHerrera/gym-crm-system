@@ -26,7 +26,7 @@ public class FacadeApp {
 
     public void run(){
 
-        User user = new User();
+        /*User user = new User();
         user.setFirstName("Jeovan");
         user.setLastName("Herrera");
         user.setIsActive(true);
@@ -68,6 +68,6 @@ public class FacadeApp {
         System.out.println(traineeService.selectByUsername("jeovan.herrera").getDateOfBirth());
 
         Map<String, String> criteria = Map.of("trainingName", "cardio", "trainingDuration", "30");
-        System.out.println(trainingService.getByUsernameAndCriteria("jeovan.herrera12345678910111213141516", criteria).toString());
+        System.out.println(trainingService.getByUsernameAndCriteria("jeovan.herrera12345678910111213141516", criteria).toString());*/
     }
 }

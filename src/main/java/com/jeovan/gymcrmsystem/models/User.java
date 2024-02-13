@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Entity
-public class User implements SimpleInterface{
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
