@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -55,9 +56,9 @@ public class TrainerServiceImpl implements TrainerService{
     }
 
     @Override
-    @Secured("ADMIN")
-    public Trainer selectByUsername(String username) {
-        return trainerDao.findByUserUsername(username).get();
+    //@Secured("ADMIN")
+    public Optional<Trainer> selectByUsername(String username) {
+        return trainerDao.findByUserUsername(username);
     }
 
     @Override
@@ -69,22 +70,24 @@ public class TrainerServiceImpl implements TrainerService{
     @Override
     @Secured("ADMIN")
     public Trainer updatePassword(Credentials credentials){
-        Trainer trainer = selectByUsername(credentials.getUsername());
-        User user = trainer.getUser();
-        user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
-        return trainerDao.save(trainer);
+        Optional<Trainer> trainer = selectByUsername(credentials.getUsername());
+        if(trainer.isPresent()) {
+            User user = trainer.get().getUser();
+            user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
+            return trainerDao.save(trainer.get());
+        }
+        return null;
     }
     @Override
-    @Secured("ADMIN")
-    public Trainer toggleActiveStatus(String username){
-        Trainer trainer = selectByUsername(username);
-        User user = trainer.getUser();
-        if(user.getIsActive()){
-            user.setIsActive(false);
-        }else{
-            user.setIsActive(true);
+    //@Secured("ADMIN")
+    public Trainer toggleActiveStatus(User user){
+        Optional<Trainer> trainer = selectByUsername(user.getUsername());
+        if(trainer.isPresent()) {
+            User userToUpdate = trainer.get().getUser();
+            userToUpdate.setIsActive(!user.getIsActive());
+            return trainerDao.save(trainer.get());
         }
-        return trainerDao.save(trainer);
+        return  null;
     }
     @Override
     @Secured("ADMIN")

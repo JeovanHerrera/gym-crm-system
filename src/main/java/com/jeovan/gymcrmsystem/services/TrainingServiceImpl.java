@@ -20,7 +20,12 @@ public class TrainingServiceImpl implements TrainingService{
     @Autowired
     private TrainingDao trainingDao;
     @Autowired
-    private TrainingTypeDao trainingTypeDao;
+    private TrainingTypeService trainingTypeService;
+    @Autowired
+    private TraineeService traineeService;
+    @Autowired
+    private TrainerService trainerService;
+
 
     @Override
     public List<Training> getAll() {
@@ -29,7 +34,9 @@ public class TrainingServiceImpl implements TrainingService{
 
     @Override
     public Training create(Training training) {
-        training.setTrainingType(trainingTypeDao.findByTrainingTypeName(training.getTrainingType().getTrainingTypeName()).get());
+        training.setTrainingType(trainingTypeService.getByTrainingTypeName(training.getTrainingType().getTrainingTypeName()).get());
+        training.setTrainer(trainerService.selectByUsername(training.getTrainer().getUser().getUsername()).get());
+        training.setTrainee(traineeService.selectByUsername(training.getTrainee().getUser().getUsername()).get());
         return trainingDao.save(training);
     }
 

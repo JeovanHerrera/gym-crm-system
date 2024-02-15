@@ -34,7 +34,6 @@ public class Trainee implements SimpleInterface{
 
     @OneToMany(mappedBy = "trainee")
     @JsonManagedReference(value = "trainee")
-    @JsonIgnore
     private List<Training> trainings;
 
     @ManyToMany

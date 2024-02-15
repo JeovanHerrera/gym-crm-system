@@ -1,5 +1,6 @@
 package com.jeovan.gymcrmsystem.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,5 +25,6 @@ public class TrainingType {
     private String trainingTypeName;
 
     @OneToMany(mappedBy = "trainingType")
+    @JsonIgnore
     private List<Trainer> trainers;
 }
