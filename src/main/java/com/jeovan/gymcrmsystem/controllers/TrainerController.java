@@ -3,14 +3,10 @@ package com.jeovan.gymcrmsystem.controllers;
 import com.jeovan.gymcrmsystem.constants.EndPoint;
 import com.jeovan.gymcrmsystem.constants.SwaggerConstants;
 import com.jeovan.gymcrmsystem.helpers.responses.Credentials;
-import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
-import com.jeovan.gymcrmsystem.services.TraineeService;
 import com.jeovan.gymcrmsystem.services.TrainerService;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +26,7 @@ public class TrainerController {
     private final TrainerService trainerService;
 
     @GetMapping
-    @Operation(summary = SwaggerConstants.API_OPERATION_GET_ALL_USERS)
+    @Operation(summary = SwaggerConstants.API_OPERATION_GET_ALL_TRAINERS)
     public ResponseEntity<List<Trainer>> getAllUsers() {
         return ResponseEntity.ok(trainerService.getAll());
     }
@@ -42,22 +38,26 @@ public class TrainerController {
     }
 
     @PutMapping(EndPoint.TRAINER_RESET_PASSWORD)
-    public ResponseEntity<String> changePassword(@RequestBody Credentials credentials){
+    @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINER_PASSWORD)
+    public HttpStatusCode changePassword(@RequestBody Credentials credentials){
         trainerService.updatePassword(credentials);
-        return ResponseEntity.ok("OK");
+        return HttpStatus.OK;
     }
 
     @GetMapping(EndPoint.TRAINER_USERNAME)
-    public ResponseEntity<Trainer> getTraineeByUsername(@PathVariable String username){
+    @Operation(summary = SwaggerConstants.API_OPERATION_GET_TRAINER)
+    public ResponseEntity<Trainer> getTrainerByUsername(@PathVariable String username){
         return ResponseEntity.of(trainerService.selectByUsername(username));
     }
 
     @PutMapping
+    @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINER)
     public ResponseEntity<Trainer> updateTraineeProfile(@RequestBody Trainer trainer){
         return ResponseEntity.ok(trainerService.update(trainer));
     }
 
     @PatchMapping
+    @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINER_ACTIVE_STATUS)
     public HttpStatusCode toggleActiveStatus(@RequestBody User user){
         trainerService.toggleActiveStatus(user);
         return HttpStatus.OK;

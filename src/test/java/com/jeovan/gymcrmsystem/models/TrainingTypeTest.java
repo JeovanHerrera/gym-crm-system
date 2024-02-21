@@ -2,6 +2,8 @@ package com.jeovan.gymcrmsystem.models;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,10 +14,12 @@ class TrainingTypeTest {
     void createTrainingTypeWithAllArgsConstructor() {
         UUID id = UUID.randomUUID();
         String trainingTypeName = "Generic Type";
-        TrainingType trainingType = new TrainingType(id, trainingTypeName);
+        List<Trainer> trainers = new ArrayList<>();
+        TrainingType trainingType = new TrainingType(id, trainingTypeName, trainers);
 
         assertEquals(id, trainingType.getId());
         assertEquals(trainingTypeName, trainingType.getTrainingTypeName());
+        assertNotNull(trainingType.getTrainers());
     }
 
     @Test
@@ -26,8 +30,10 @@ class TrainingTypeTest {
 
         trainingType.setTrainingTypeName(trainingTypeName);
         trainingType.setId(id);
+        trainingType.setTrainers(new ArrayList<>());
 
         assertEquals(id, trainingType.getId());
         assertEquals(trainingTypeName, trainingType.getTrainingTypeName());
+        assertNotNull(trainingType.getTrainers());
     }
 }

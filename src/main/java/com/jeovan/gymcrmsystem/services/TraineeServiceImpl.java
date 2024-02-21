@@ -1,10 +1,15 @@
 package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TraineeDao;
+import com.jeovan.gymcrmsystem.helpers.TraineeBuilder;
+import com.jeovan.gymcrmsystem.helpers.exceptions.EntityNotFoundException;
+import com.jeovan.gymcrmsystem.helpers.exceptions.InvalidEntityException;
 import com.jeovan.gymcrmsystem.helpers.responses.Credentials;
+import com.jeovan.gymcrmsystem.helpers.validations.TraineeValidator;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +29,10 @@ public class TraineeServiceImpl implements TraineeService {
     private TrainerService trainerService;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private TraineeValidator traineeValidator;
+    @Autowired
+    private TraineeBuilder traineeBuilder;
 
     @Override
     @Secured("ADMIN")
@@ -32,26 +41,33 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    public Trainee create(Trainee trainee) {
-        User user = trainee.getUser();
-        user.setUsername(credentialGeneratorService.generateUsername(user.getFirstName(), user.getLastName()));
-        String password = credentialGeneratorService.generatePassword();
-        user.setPassword(passwordEncoder.encode(password));
-        trainee = traineeDao.save(trainee);
-        trainee.getUser().setPassword(password);
-        return trainee;
+    public Trainee create(@Valid Trainee trainee) {
+        if(traineeValidator.checkForCreationSuccessful(trainee)){
+            String password = traineeBuilder.buildTraineeForCreation(trainee);
+            Trainee persistedTrainee = traineeDao.save(trainee);
+            persistedTrainee.getUser().setPassword(password);
+            return persistedTrainee;
+        }
+        throw new InvalidEntityException(Trainee.class.getTypeName());
     }
 
     @Override
-    @Secured("ADMIN")
+    //@Secured("ADMIN")
     public Trainee update(Trainee trainee) {
-        return traineeDao.save(trainee);
+        if(traineeValidator.checkForUpdateSuccessful(trainee)){
+            Optional<Trainee> foundTrainee = traineeDao.findByUserUsername(trainee.getUser().getUsername());
+            if(foundTrainee.isPresent()){
+                return traineeDao.save(traineeBuilder.buildTraineeForUpdate(foundTrainee.get(), trainee));
+            }
+            throw new EntityNotFoundException(Trainee.class.getTypeName(), trainee.getUser().getUsername());
+        }
+        throw new InvalidEntityException(Trainee.class.getTypeName());
     }
 
     @Override
     @Secured("ADMIN")
     public Trainee select(UUID id) {
-        return traineeDao.findById(id).get();
+        return traineeDao.findById(id).orElse(null);
     }
 
     @Override
@@ -75,6 +91,11 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+    public String generateCredentials(User user) {
+        return null;
+    }
+
+    @Override
     //@Secured("ADMIN")
     public Trainee toggleActiveStatus(User user){
         Optional<Trainee> trainee = selectByUsername(user.getUsername());
@@ -91,7 +112,7 @@ public class TraineeServiceImpl implements TraineeService {
         traineeDao.delete(trainee);
     }
 
-    @Secured("ADMIN")
+    //@Secured("ADMIN")
     public void deleteByUsername(String username) {
         traineeDao.deleteByUserUsername(username);
     }
@@ -101,10 +122,10 @@ public class TraineeServiceImpl implements TraineeService {
         Optional<Trainee> foundTrainee = selectByUsername(username);
         if(foundTrainee.isPresent()){
             Trainee trainee = foundTrainee.get();
-            trainers = trainers.stream().map(trainer -> trainerService.selectByUsername(trainer.getUser().getUsername())).filter(Optional::isPresent).map(Optional::get).toList();
-            //trainee.setTrainers(trainers);
+            List<Trainer> currentTrainers = trainee.getTrainers();
+            currentTrainers.addAll(trainers.stream().map(trainer -> trainerService.selectByUsername(trainer.getUser().getUsername())).filter(trainer -> trainer.isPresent() && !currentTrainers.contains(trainer.get()) ).map(Optional::get).toList());
             traineeDao.save(trainee);
-            return trainers;
+            return trainee.getTrainers();
         }
         return null;
     }

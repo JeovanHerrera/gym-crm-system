@@ -4,6 +4,7 @@ import com.jeovan.gymcrmsystem.daos.TrainerDao;
 import com.jeovan.gymcrmsystem.daos.TrainingTypeDao;
 import com.jeovan.gymcrmsystem.helpers.responses.Credentials;
 import com.jeovan.gymcrmsystem.models.Trainer;
+import com.jeovan.gymcrmsystem.models.TrainingType;
 import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -33,7 +34,10 @@ public class TrainerServiceImpl implements TrainerService{
 
     @Override
     public Trainer create(Trainer trainer) {
-        trainer.setTrainingType(trainingTypeDao.findByTrainingTypeName(trainer.getTrainingType().getTrainingTypeName()).get());
+        Optional<TrainingType> trainingType = trainingTypeDao.findByTrainingTypeName(trainer.getTrainingType().getTrainingTypeName());
+        if(trainingType.isPresent()){
+            trainer.setTrainingType(trainingType.get());
+        }
         User user = trainer.getUser();
         user.setUsername(credentialGeneratorService.generateUsername(user.getFirstName(), user.getLastName()));
         String password = credentialGeneratorService.generatePassword();
@@ -78,6 +82,12 @@ public class TrainerServiceImpl implements TrainerService{
         }
         return null;
     }
+
+    @Override
+    public String generateCredentials(User user) {
+        return null;
+    }
+
     @Override
     //@Secured("ADMIN")
     public Trainer toggleActiveStatus(User user){

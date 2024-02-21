@@ -1,7 +1,6 @@
 package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainingDao;
-import com.jeovan.gymcrmsystem.daos.TrainingTypeDao;
 import com.jeovan.gymcrmsystem.models.Training;
 import com.jeovan.gymcrmsystem.storage.InMemoryStorage;
 import org.springframework.beans.factory.annotation.Autowired;
