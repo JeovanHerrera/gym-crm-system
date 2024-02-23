@@ -6,6 +6,7 @@ import com.jeovan.gymcrmsystem.models.TrainingType;
 import com.jeovan.gymcrmsystem.services.TrainingTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +17,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping(EndPoint.TRAINING_TYPE)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TrainingTypeController {
-    @Autowired
     private final TrainingTypeService trainingTypeService;
 
     @GetMapping

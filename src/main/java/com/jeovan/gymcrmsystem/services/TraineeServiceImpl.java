@@ -41,6 +41,7 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
+
     public Trainee create(@Valid Trainee trainee) {
         if(traineeValidator.checkForCreationSuccessful(trainee)){
             String password = traineeBuilder.buildTraineeForCreation(trainee);

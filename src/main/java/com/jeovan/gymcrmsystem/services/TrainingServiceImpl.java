@@ -2,7 +2,6 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainingDao;
 import com.jeovan.gymcrmsystem.models.Training;
-import com.jeovan.gymcrmsystem.storage.InMemoryStorage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,9 +11,6 @@ import java.util.UUID;
 
 @Service
 public class TrainingServiceImpl implements TrainingService{
-
-    @Autowired
-    private InMemoryStorage inMemoryStorage;
 
     @Autowired
     private TrainingDao trainingDao;

@@ -10,10 +10,12 @@ import com.jeovan.gymcrmsystem.services.TraineeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,13 +25,12 @@ import static com.jeovan.gymcrmsystem.helpers.ResponseBuilder.buildCredentialRes
 
 @RestController
 @RequestMapping(EndPoint.TRAINEE)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TraineeController {
 
-    @Autowired
     private final TraineeService traineeService;
 
-    @GetMapping("/all")
+    @GetMapping(EndPoint.TRAINEE_GET_ALL)
     @Operation(summary = SwaggerConstants.API_OPERATION_GET_ALL_TRAINEES)
     public ResponseEntity<List<Trainee>> getAllUsers() {
         return ResponseEntity.ok(traineeService.getAll());
@@ -69,6 +70,7 @@ public class TraineeController {
 
     @PutMapping
     @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINEE)
+    @Secured("ADMIN")
     public ResponseEntity<Trainee> updateTraineeProfile(@RequestBody Trainee trainee){
         return ResponseEntity.of(Optional.of(traineeService.update(trainee)));
     }

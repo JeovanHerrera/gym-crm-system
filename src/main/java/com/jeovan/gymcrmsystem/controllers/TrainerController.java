@@ -8,6 +8,7 @@ import com.jeovan.gymcrmsystem.models.User;
 import com.jeovan.gymcrmsystem.services.TrainerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,12 +21,11 @@ import static com.jeovan.gymcrmsystem.helpers.ResponseBuilder.buildCredentialRes
 
 @RestController
 @RequestMapping(EndPoint.TRAINER)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TrainerController {
-    @Autowired
     private final TrainerService trainerService;
 
-    @GetMapping
+    @GetMapping(EndPoint.TRAINER_GET_ALL)
     @Operation(summary = SwaggerConstants.API_OPERATION_GET_ALL_TRAINERS)
     public ResponseEntity<List<Trainer>> getAllUsers() {
         return ResponseEntity.ok(trainerService.getAll());

@@ -6,6 +6,7 @@ import com.jeovan.gymcrmsystem.models.Training;
 import com.jeovan.gymcrmsystem.services.TrainingService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(EndPoint.TRAINING)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TrainingController {
-    @Autowired
     private final TrainingService trainingService;
 
     @GetMapping

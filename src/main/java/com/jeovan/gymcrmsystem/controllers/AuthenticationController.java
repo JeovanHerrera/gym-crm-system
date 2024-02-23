@@ -5,16 +5,16 @@ import com.jeovan.gymcrmsystem.constants.SwaggerConstants;
 import com.jeovan.gymcrmsystem.services.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(EndPoint.LOGIN)
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthenticationController {
 
-    @Autowired
     private final AuthenticationService authenticationService;
 
     @GetMapping

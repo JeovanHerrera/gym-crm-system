@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Credentials {
-    String username;
-    String password;
-    String newPassword;
+    private String username;
+    private String password;
+    private String newPassword;
 }
