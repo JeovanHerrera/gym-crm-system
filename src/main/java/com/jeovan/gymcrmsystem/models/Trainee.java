@@ -1,6 +1,10 @@
 package com.jeovan.gymcrmsystem.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import lombok.*;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -28,14 +32,18 @@ public class Trainee implements SimpleInterface{
     @JoinColumn(name = "user_id")
     @Cascade(CascadeType.PERSIST)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @Valid
     private User user;
 
     @OneToMany(mappedBy = "trainee")
+    @JsonManagedReference(value = "trainee")
+    @JsonIgnore
     private List<Training> trainings;
 
     @ManyToMany
     @JoinTable(name = "trainee_trainer",
             joinColumns = @JoinColumn(name = "trainee_id"),
             inverseJoinColumns = @JoinColumn(name = "trainer_id"))
+    @JsonIgnoreProperties(value = {"trainees", "trainings"})
     private List<Trainer> trainers;
 }

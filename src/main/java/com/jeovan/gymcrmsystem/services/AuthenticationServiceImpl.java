@@ -12,7 +12,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    SecurityContext context;
+    private SecurityContext context;
 
     @Override
     public void authenticateUser(String username, String password) {

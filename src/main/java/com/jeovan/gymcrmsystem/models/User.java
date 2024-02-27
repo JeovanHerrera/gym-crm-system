@@ -1,5 +1,6 @@
 package com.jeovan.gymcrmsystem.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @ToString
 @Entity
-public class User implements SimpleInterface{
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -31,6 +32,7 @@ public class User implements SimpleInterface{
     private String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)

@@ -21,8 +21,8 @@ class GymCrmSystemApplication {
 
 	public static void main(String[] args) {
 		ApplicationContext context = SpringApplication.run(GymCrmSystemApplication.class, args);
-		FacadeApp facadeApp = (FacadeApp) context.getBean("facadeApp");
-		facadeApp.run();
+		//FacadeApp facadeApp = (FacadeApp) context.getBean("facadeApp");
+		//facadeApp.run();
 	}
 
 }

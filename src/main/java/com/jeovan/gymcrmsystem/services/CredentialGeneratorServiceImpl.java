@@ -2,6 +2,7 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.constants.PasswordDefaults;
 import com.jeovan.gymcrmsystem.daos.UserDao;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ public class CredentialGeneratorServiceImpl implements CredentialGeneratorServic
     private UserDao userDao;
 
     @Override
-    public String generateUsername( String firstName, String lastName) {
+    public String generateUsername(@Valid String firstName, String lastName) {
         String username = firstName.toLowerCase() + "." + lastName.toLowerCase();
         int suffix = 1;
         while(userDao.findByUsername(username).isPresent()){

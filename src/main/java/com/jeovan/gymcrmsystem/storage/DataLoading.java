@@ -1,11 +1,7 @@
 package com.jeovan.gymcrmsystem.storage;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jeovan.gymcrmsystem.models.SimpleInterface;
-import com.jeovan.gymcrmsystem.models.Trainee;
-import com.jeovan.gymcrmsystem.models.Trainer;
-import com.jeovan.gymcrmsystem.models.Training;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanPostProcessor;
