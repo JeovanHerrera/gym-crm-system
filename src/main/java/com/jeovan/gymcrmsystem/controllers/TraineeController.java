@@ -2,16 +2,14 @@ package com.jeovan.gymcrmsystem.controllers;
 
 import com.jeovan.gymcrmsystem.constants.EndPoint;
 import com.jeovan.gymcrmsystem.constants.SwaggerConstants;
-import com.jeovan.gymcrmsystem.helpers.responses.Credentials;
+import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
 import com.jeovan.gymcrmsystem.services.TraineeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -38,14 +36,14 @@ public class TraineeController {
 
     @PostMapping
     @Operation(summary = SwaggerConstants.API_OPERATION_CREATE_TRAINEE)
-    public ResponseEntity<Credentials> createTrainee(@Valid @RequestBody Trainee trainee){
+    public ResponseEntity<CredentialsDTO> createTrainee(@Valid @RequestBody Trainee trainee){
         return ResponseEntity.ok(buildCredentialResponse(traineeService.create(trainee)));
     }
 
     @PutMapping(EndPoint.TRAINEE_RESET_PASSWORD)
     @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINEE_PASSWORD)
-    public HttpStatusCode changePassword(@RequestBody Credentials credentials){
-        traineeService.updatePassword(credentials);
+    public HttpStatusCode changePassword(@RequestBody CredentialsDTO credentialsDTO){
+        traineeService.updatePassword(credentialsDTO);
         return HttpStatus.OK;
     }
 
@@ -70,7 +68,6 @@ public class TraineeController {
 
     @PutMapping
     @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINEE)
-    @Secured("ADMIN")
     public ResponseEntity<Trainee> updateTraineeProfile(@RequestBody Trainee trainee){
         return ResponseEntity.of(Optional.of(traineeService.update(trainee)));
     }

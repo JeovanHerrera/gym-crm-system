@@ -2,9 +2,9 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TraineeDao;
 import com.jeovan.gymcrmsystem.helpers.TraineeBuilder;
-import com.jeovan.gymcrmsystem.helpers.exceptions.EntityNotFoundException;
-import com.jeovan.gymcrmsystem.helpers.exceptions.InvalidEntityException;
-import com.jeovan.gymcrmsystem.helpers.responses.Credentials;
+import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
+import com.jeovan.gymcrmsystem.exceptions.InvalidEntityException;
+import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
 import com.jeovan.gymcrmsystem.helpers.validations.TraineeValidator;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
@@ -41,15 +41,14 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-
-    public Trainee create(@Valid Trainee trainee) {
+    public Trainee create(Trainee trainee) {
         if(traineeValidator.checkForCreationSuccessful(trainee)){
             String password = traineeBuilder.buildTraineeForCreation(trainee);
             Trainee persistedTrainee = traineeDao.save(trainee);
             persistedTrainee.getUser().setPassword(password);
             return persistedTrainee;
         }
-        throw new InvalidEntityException(Trainee.class.getTypeName());
+        throw new InvalidEntityException(Trainee.class.getSimpleName());
     }
 
     @Override
@@ -60,9 +59,9 @@ public class TraineeServiceImpl implements TraineeService {
             if(foundTrainee.isPresent()){
                 return traineeDao.save(traineeBuilder.buildTraineeForUpdate(foundTrainee.get(), trainee));
             }
-            throw new EntityNotFoundException(Trainee.class.getTypeName(), trainee.getUser().getUsername());
+            throw new EntityNotFoundException(Trainee.class.getSimpleName(), trainee.getUser().getUsername());
         }
-        throw new InvalidEntityException(Trainee.class.getTypeName());
+        throw new InvalidEntityException(Trainee.class.getSimpleName());
     }
 
     @Override
@@ -79,12 +78,12 @@ public class TraineeServiceImpl implements TraineeService {
 
     @Override
     //@Secured("ADMIN")
-    public Trainee updatePassword(Credentials credentials){
-        Optional<Trainee> trainee = selectByUsername(credentials.getUsername());
+    public Trainee updatePassword(CredentialsDTO credentialsDTO){
+        Optional<Trainee> trainee = selectByUsername(credentialsDTO.getUsername());
         if(trainee.isPresent()) {
             User user = trainee.get().getUser();
-            if (passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
-                user.setPassword(passwordEncoder.encode(credentials.getNewPassword()));
+            if (passwordEncoder.matches(credentialsDTO.getPassword(), user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(credentialsDTO.getNewPassword()));
                 return traineeDao.save(trainee.get());
             }
         }

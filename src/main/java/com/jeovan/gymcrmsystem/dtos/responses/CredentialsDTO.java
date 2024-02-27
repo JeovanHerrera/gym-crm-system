@@ -1,4 +1,4 @@
-package com.jeovan.gymcrmsystem.helpers.responses;
+package com.jeovan.gymcrmsystem.dtos.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Credentials {
+public class CredentialsDTO {
     private String username;
     private String password;
     private String newPassword;
