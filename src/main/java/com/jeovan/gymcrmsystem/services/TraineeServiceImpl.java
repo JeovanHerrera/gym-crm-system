@@ -9,9 +9,7 @@ import com.jeovan.gymcrmsystem.helpers.validations.TraineeValidator;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +33,6 @@ public class TraineeServiceImpl implements TraineeService {
     private TraineeBuilder traineeBuilder;
 
     @Override
-    @Secured("ADMIN")
     public List<Trainee> getAll() {
         return traineeDao.findAll();
     }
@@ -52,7 +49,6 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    //@Secured("ADMIN")
     public Trainee update(Trainee trainee) {
         if(traineeValidator.checkForUpdateSuccessful(trainee)){
             Optional<Trainee> foundTrainee = traineeDao.findByUserUsername(trainee.getUser().getUsername());
@@ -65,19 +61,16 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    @Secured("ADMIN")
     public Trainee select(UUID id) {
         return traineeDao.findById(id).orElse(null);
     }
 
     @Override
-    //@Secured("ADMIN")
     public Optional<Trainee> selectByUsername(String username) {
         return traineeDao.findByUserUsername(username);
     }
 
     @Override
-    //@Secured("ADMIN")
     public Trainee updatePassword(CredentialsDTO credentialsDTO){
         Optional<Trainee> trainee = selectByUsername(credentialsDTO.getUsername());
         if(trainee.isPresent()) {
@@ -96,7 +89,6 @@ public class TraineeServiceImpl implements TraineeService {
     }
 
     @Override
-    //@Secured("ADMIN")
     public Trainee toggleActiveStatus(User user){
         Optional<Trainee> trainee = selectByUsername(user.getUsername());
         if(trainee.isPresent()) {
@@ -107,12 +99,10 @@ public class TraineeServiceImpl implements TraineeService {
         return null;
     }
     @Override
-    @Secured("ADMIN")
     public void delete(Trainee trainee) {
         traineeDao.delete(trainee);
     }
 
-    //@Secured("ADMIN")
     public void deleteByUsername(String username) {
         traineeDao.deleteByUserUsername(username);
     }

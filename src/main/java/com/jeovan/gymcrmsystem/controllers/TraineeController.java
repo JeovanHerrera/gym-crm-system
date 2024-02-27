@@ -1,5 +1,6 @@
 package com.jeovan.gymcrmsystem.controllers;
 
+import com.jeovan.gymcrmsystem.actuator.metrics.TraineeCreationMetric;
 import com.jeovan.gymcrmsystem.constants.EndPoint;
 import com.jeovan.gymcrmsystem.constants.SwaggerConstants;
 import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
@@ -27,6 +28,7 @@ import static com.jeovan.gymcrmsystem.helpers.ResponseBuilder.buildCredentialRes
 public class TraineeController {
 
     private final TraineeService traineeService;
+    private final TraineeCreationMetric traineeCreationMetric;
 
     @GetMapping(EndPoint.TRAINEE_GET_ALL)
     @Operation(summary = SwaggerConstants.API_OPERATION_GET_ALL_TRAINEES)
@@ -37,6 +39,7 @@ public class TraineeController {
     @PostMapping
     @Operation(summary = SwaggerConstants.API_OPERATION_CREATE_TRAINEE)
     public ResponseEntity<CredentialsDTO> createTrainee(@Valid @RequestBody Trainee trainee){
+        traineeCreationMetric.increment();
         return ResponseEntity.ok(buildCredentialResponse(traineeService.create(trainee)));
     }
 

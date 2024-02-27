@@ -7,7 +7,6 @@ import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.TrainingType;
 import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,6 @@ public class TrainerServiceImpl implements TrainerService{
     private PasswordEncoder passwordEncoder;
 
     @Override
-    @Secured("ADMIN")
     public List<Trainer> getAll() {
         return trainerDao.findAll();
     }
@@ -48,31 +46,26 @@ public class TrainerServiceImpl implements TrainerService{
     }
 
     @Override
-    @Secured("ADMIN")
     public Trainer update(Trainer trainer) {
         return trainerDao.save(trainer);
     }
 
     @Override
-    @Secured("ADMIN")
     public Trainer select(UUID id) {
         return trainerDao.findById(id).get();
     }
 
     @Override
-    //@Secured("ADMIN")
     public Optional<Trainer> selectByUsername(String username) {
         return trainerDao.findByUserUsername(username);
     }
 
     @Override
-    @Secured("ADMIN")
     public void deleteByUsername(String username) {
         trainerDao.deleteByUserUsername(username);
     }
 
     @Override
-    @Secured("ADMIN")
     public Trainer updatePassword(CredentialsDTO credentialsDTO){
         Optional<Trainer> trainer = selectByUsername(credentialsDTO.getUsername());
         if(trainer.isPresent()) {
@@ -89,7 +82,6 @@ public class TrainerServiceImpl implements TrainerService{
     }
 
     @Override
-    //@Secured("ADMIN")
     public Trainer toggleActiveStatus(User user){
         Optional<Trainer> trainer = selectByUsername(user.getUsername());
         if(trainer.isPresent()) {
@@ -100,7 +92,6 @@ public class TrainerServiceImpl implements TrainerService{
         return  null;
     }
     @Override
-    @Secured("ADMIN")
     public void delete(Trainer trainer) {
     }
 }
