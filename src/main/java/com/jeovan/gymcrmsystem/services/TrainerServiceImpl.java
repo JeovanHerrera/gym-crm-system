@@ -2,12 +2,11 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainerDao;
 import com.jeovan.gymcrmsystem.daos.TrainingTypeDao;
-import com.jeovan.gymcrmsystem.helpers.responses.Credentials;
+import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.TrainingType;
 import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +26,6 @@ public class TrainerServiceImpl implements TrainerService{
     private PasswordEncoder passwordEncoder;
 
     @Override
-    @Secured("ADMIN")
     public List<Trainer> getAll() {
         return trainerDao.findAll();
     }
@@ -48,33 +46,28 @@ public class TrainerServiceImpl implements TrainerService{
     }
 
     @Override
-    @Secured("ADMIN")
     public Trainer update(Trainer trainer) {
         return trainerDao.save(trainer);
     }
 
     @Override
-    @Secured("ADMIN")
     public Trainer select(UUID id) {
         return trainerDao.findById(id).get();
     }
 
     @Override
-    //@Secured("ADMIN")
     public Optional<Trainer> selectByUsername(String username) {
         return trainerDao.findByUserUsername(username);
     }
 
     @Override
-    @Secured("ADMIN")
     public void deleteByUsername(String username) {
         trainerDao.deleteByUserUsername(username);
     }
 
     @Override
-    @Secured("ADMIN")
-    public Trainer updatePassword(Credentials credentials){
-        Optional<Trainer> trainer = selectByUsername(credentials.getUsername());
+    public Trainer updatePassword(CredentialsDTO credentialsDTO){
+        Optional<Trainer> trainer = selectByUsername(credentialsDTO.getUsername());
         if(trainer.isPresent()) {
             User user = trainer.get().getUser();
             user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
@@ -89,7 +82,6 @@ public class TrainerServiceImpl implements TrainerService{
     }
 
     @Override
-    //@Secured("ADMIN")
     public Trainer toggleActiveStatus(User user){
         Optional<Trainer> trainer = selectByUsername(user.getUsername());
         if(trainer.isPresent()) {
@@ -100,7 +92,6 @@ public class TrainerServiceImpl implements TrainerService{
         return  null;
     }
     @Override
-    @Secured("ADMIN")
     public void delete(Trainer trainer) {
     }
 }
