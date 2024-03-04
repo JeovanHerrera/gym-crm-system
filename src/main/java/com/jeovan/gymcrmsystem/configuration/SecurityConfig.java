@@ -1,6 +1,8 @@
 package com.jeovan.gymcrmsystem.configuration;
 
 import com.jeovan.gymcrmsystem.constants.EndPoint;
+import com.jeovan.gymcrmsystem.security.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,9 +31,12 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
     @Value("${cors.origin.url}")
     private String corsOriginUrl;
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public static final List<String> METHODS =
             new ArrayList<>(
@@ -67,8 +73,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers(HttpMethod.POST, EndPoint.TRAINEE)
+                        .requestMatchers(HttpMethod.POST,EndPoint.TRAINEE)
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, EndPoint.TRAINER)
                         .permitAll()
@@ -79,9 +86,11 @@ public class SecurityConfig {
                         .anyRequest()
                         .authenticated())
                 .logout(Customizer.withDefaults())
+                .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
-                .headers().frameOptions().disable();
+                .headers(AbstractHttpConfigurer::disable)
+                .securityMatcher("/**");
         return http.build();
     }
 
