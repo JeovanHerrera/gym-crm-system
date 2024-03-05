@@ -7,6 +7,7 @@ import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
+import com.jeovan.gymcrmsystem.security.CustomUserDetail;
 import com.jeovan.gymcrmsystem.services.TraineeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -14,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class TraineeController {
 
     @GetMapping(EndPoint.TRAINEE_USERNAME)
     @Operation(summary = SwaggerConstants.API_OPERATION_GET_TRAINEE)
-    public ResponseEntity<Trainee> getTraineeByUsername(@PathVariable String username){
+    public ResponseEntity<Trainee> getTraineeByUsername(@PathVariable String username, @AuthenticationPrincipal(errorOnInvalidType=true) CustomUserDetail userDetail){
         return ResponseEntity.of(traineeService.selectByUsername(username));
     }
 
