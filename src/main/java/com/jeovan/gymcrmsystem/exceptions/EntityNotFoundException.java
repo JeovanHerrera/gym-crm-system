@@ -1,4 +1,4 @@
-package com.jeovan.gymcrmsystem.helpers.exceptions;
+package com.jeovan.gymcrmsystem.exceptions;
 
 public class EntityNotFoundException extends RuntimeException{
     public EntityNotFoundException(String type, String username){

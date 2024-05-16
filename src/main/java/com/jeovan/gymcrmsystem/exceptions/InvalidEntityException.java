@@ -1,4 +1,4 @@
-package com.jeovan.gymcrmsystem.helpers.exceptions;
+package com.jeovan.gymcrmsystem.exceptions;
 
 public class InvalidEntityException extends RuntimeException{
     public InvalidEntityException(String type){

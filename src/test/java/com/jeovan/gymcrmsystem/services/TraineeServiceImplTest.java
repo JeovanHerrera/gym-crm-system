@@ -2,7 +2,7 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TraineeDao;
 import com.jeovan.gymcrmsystem.helpers.TraineeBuilder;
-import com.jeovan.gymcrmsystem.helpers.exceptions.InvalidEntityException;
+import com.jeovan.gymcrmsystem.exceptions.InvalidEntityException;
 import com.jeovan.gymcrmsystem.helpers.validations.TraineeValidator;
 import com.jeovan.gymcrmsystem.models.*;
 import org.junit.jupiter.api.AfterEach;
