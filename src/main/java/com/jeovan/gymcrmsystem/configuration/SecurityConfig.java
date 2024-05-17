@@ -79,6 +79,8 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, EndPoint.TRAINER)
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, EndPoint.TRAINING_TYPE)
+                        .permitAll()
                         .requestMatchers(EndPoint.LOGIN)
                         .permitAll()
                         .requestMatchers(SWAGGER_UI, SWAGGER_VERSION)

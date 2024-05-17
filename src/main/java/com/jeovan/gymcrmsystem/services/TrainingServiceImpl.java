@@ -1,7 +1,10 @@
 package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainingDao;
+import com.jeovan.gymcrmsystem.dtos.requests.TrainingDetailsDto;
+import com.jeovan.gymcrmsystem.helpers.feing.ScheduledTrainingMicroserviceClient;
 import com.jeovan.gymcrmsystem.models.Training;
+import com.jeovan.gymcrmsystem.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +23,8 @@ public class TrainingServiceImpl implements TrainingService{
     private TraineeService traineeService;
     @Autowired
     private TrainerService trainerService;
-
+    @Autowired
+    private ScheduledTrainingMicroserviceClient scheduledTrainingMicroserviceClient;
 
     @Override
     public List<Training> getAll() {
@@ -29,9 +33,22 @@ public class TrainingServiceImpl implements TrainingService{
 
     @Override
     public Training create(Training training) {
-        training.setTrainingType(trainingTypeService.getByTrainingTypeName(training.getTrainingType().getTrainingTypeName()).get());
-        training.setTrainer(trainerService.selectByUsername(training.getTrainer().getUser().getUsername()).get());
-        training.setTrainee(traineeService.selectByUsername(training.getTrainee().getUser().getUsername()).get());
+
+        training.setTrainingType(
+                trainingTypeService.getByTrainingTypeName(training.getTrainingType().getTrainingTypeName())
+                        .orElseThrow(() -> new RuntimeException("Training Type not found"))
+        );
+        training.setTrainer(
+                trainerService.selectByUsername(training.getTrainer().getUser().getUsername())
+                        .orElseThrow(() -> new RuntimeException("Trainer not found"))
+        );
+        training.setTrainee(
+                traineeService.selectByUsername(training.getTrainee().getUser().getUsername())
+                        .orElseThrow(() -> new RuntimeException("Trainee not found"))
+        );
+
+        scheduledTrainingMicroserviceClient.scheduleTraining(setTrainingScheduleDetails(training)).getBody();
+
         return trainingDao.save(training);
     }
 
@@ -44,4 +61,18 @@ public class TrainingServiceImpl implements TrainingService{
     public List<Training> getByUsernameAndCriteria(String username, Map<String, String> criteria) {
         return trainingDao.getByUsernameAndCriteria(username, criteria);
     }
+
+    private TrainingDetailsDto setTrainingScheduleDetails(Training training){
+        TrainingDetailsDto trainingDetailsDto = new TrainingDetailsDto();
+        User user = training.getTrainer().getUser();
+        trainingDetailsDto.setUsername(user.getUsername());
+        trainingDetailsDto.setFirstName(user.getFirstName());
+        trainingDetailsDto.setLastName(user.getLastName());
+        trainingDetailsDto.setIsActive(user.getIsActive());
+        trainingDetailsDto.setTrainingDate(training.getTrainingDate()); // Sets current date.
+        trainingDetailsDto.setDuration(training.getTrainingDuration());
+        trainingDetailsDto.setActionType("ADD");
+        return trainingDetailsDto;
+    }
+
 }
