@@ -8,6 +8,7 @@ import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Training;
 import com.jeovan.gymcrmsystem.models.User;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class TrainingServiceImpl implements TrainingService{
 
     @Autowired
@@ -37,7 +39,6 @@ public class TrainingServiceImpl implements TrainingService{
     @Override
     @CircuitBreaker(name = "TrainingScheduleBreaker")
     public Training create(Training training) {
-
         training.setTrainingType(
                 trainingTypeService.getByTrainingTypeName(training.getTrainingType().getTrainingTypeName())
                         .orElseThrow(() -> new RuntimeException("Training Type not found"))
@@ -52,7 +53,7 @@ public class TrainingServiceImpl implements TrainingService{
         );
 
         scheduledTrainingMicroserviceClient.scheduleTraining(setTrainingScheduleDetails(training)).getStatusCode();
-
+        log.info("Training added to microservice successfully");
         return trainingDao.save(training);
     }
 
