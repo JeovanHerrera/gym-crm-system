@@ -2,9 +2,12 @@ package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainingDao;
 import com.jeovan.gymcrmsystem.dtos.requests.TrainingDetailsDto;
+import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
 import com.jeovan.gymcrmsystem.helpers.feing.ScheduledTrainingMicroserviceClient;
+import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Training;
 import com.jeovan.gymcrmsystem.models.User;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +35,7 @@ public class TrainingServiceImpl implements TrainingService{
     }
 
     @Override
+    @CircuitBreaker(name = "TrainingScheduleBreaker")
     public Training create(Training training) {
 
         training.setTrainingType(
@@ -40,14 +44,14 @@ public class TrainingServiceImpl implements TrainingService{
         );
         training.setTrainer(
                 trainerService.selectByUsername(training.getTrainer().getUser().getUsername())
-                        .orElseThrow(() -> new RuntimeException("Trainer not found"))
+                        .orElseThrow(() -> new EntityNotFoundException(Trainee.class.getSimpleName(), training.getTrainer().getUser().getUsername()))
         );
         training.setTrainee(
                 traineeService.selectByUsername(training.getTrainee().getUser().getUsername())
-                        .orElseThrow(() -> new RuntimeException("Trainee not found"))
+                        .orElseThrow(() -> new EntityNotFoundException(Trainee.class.getSimpleName(), training.getTrainee().getUser().getUsername()))
         );
 
-        scheduledTrainingMicroserviceClient.scheduleTraining(setTrainingScheduleDetails(training)).getBody();
+        scheduledTrainingMicroserviceClient.scheduleTraining(setTrainingScheduleDetails(training)).getStatusCode();
 
         return trainingDao.save(training);
     }
