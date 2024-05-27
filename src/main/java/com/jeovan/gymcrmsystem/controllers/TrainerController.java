@@ -52,7 +52,7 @@ public class TrainerController {
 
     @PutMapping
     @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINER)
-    public ResponseEntity<Trainer> updateTraineeProfile(@RequestBody Trainer trainer){
+    public ResponseEntity<Trainer> updateTrainerProfile(@RequestBody Trainer trainer){
         return ResponseEntity.ok(trainerService.update(trainer));
     }
 

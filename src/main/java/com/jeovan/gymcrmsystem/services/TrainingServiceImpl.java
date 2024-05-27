@@ -52,7 +52,7 @@ public class TrainingServiceImpl implements TrainingService{
                         .orElseThrow(() -> new EntityNotFoundException(Trainee.class.getSimpleName(), training.getTrainee().getUser().getUsername()))
         );
 
-        scheduledTrainingMicroserviceClient.scheduleTraining(setTrainingScheduleDetails(training)).getStatusCode();
+        scheduledTrainingMicroserviceClient.scheduleTraining(setTrainingScheduleDetails(training, "ADD")).getStatusCode();
         log.info("Training added to microservice successfully");
         return trainingDao.save(training);
     }
@@ -67,7 +67,7 @@ public class TrainingServiceImpl implements TrainingService{
         return trainingDao.getByUsernameAndCriteria(username, criteria);
     }
 
-    private TrainingDetailsDto setTrainingScheduleDetails(Training training){
+    public TrainingDetailsDto setTrainingScheduleDetails(Training training, String action){
         TrainingDetailsDto trainingDetailsDto = new TrainingDetailsDto();
         User user = training.getTrainer().getUser();
         trainingDetailsDto.setUsername(user.getUsername());
@@ -76,7 +76,7 @@ public class TrainingServiceImpl implements TrainingService{
         trainingDetailsDto.setIsActive(user.getIsActive());
         trainingDetailsDto.setTrainingDate(training.getTrainingDate()); // Sets current date.
         trainingDetailsDto.setDuration(training.getTrainingDuration());
-        trainingDetailsDto.setActionType("ADD");
+        trainingDetailsDto.setActionType(action);
         return trainingDetailsDto;
     }
 

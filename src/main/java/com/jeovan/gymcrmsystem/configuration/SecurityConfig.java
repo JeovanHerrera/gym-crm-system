@@ -14,8 +14,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +33,6 @@ import java.util.List;
 public class SecurityConfig {
     @Value("${cors.origin.url}")
     private String corsOriginUrl;
-
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     public static final List<String> METHODS =
@@ -65,10 +62,6 @@ public class SecurityConfig {
         authenticationProvider.setPasswordEncoder(passwordEncoder);
 
         return new ProviderManager(authenticationProvider);
-    }
-    @Bean
-    public SecurityContext securityContext(){
-        return SecurityContextHolder.getContext();
     }
 
     @Bean

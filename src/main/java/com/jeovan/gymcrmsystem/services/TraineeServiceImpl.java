@@ -5,14 +5,18 @@ import com.jeovan.gymcrmsystem.helpers.TraineeBuilder;
 import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
 import com.jeovan.gymcrmsystem.exceptions.InvalidEntityException;
 import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
+import com.jeovan.gymcrmsystem.helpers.feing.ScheduledTrainingMicroserviceClient;
 import com.jeovan.gymcrmsystem.helpers.validations.TraineeValidator;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,11 +30,15 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     private TrainerService trainerService;
     @Autowired
+    private TrainingService trainingService;
+    @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     private TraineeValidator traineeValidator;
     @Autowired
     private TraineeBuilder traineeBuilder;
+    @Autowired
+    private ScheduledTrainingMicroserviceClient scheduledTrainingMicroserviceClient;
 
     @Override
     public List<Trainee> getAll() {
@@ -80,12 +88,7 @@ public class TraineeServiceImpl implements TraineeService {
                 return traineeDao.save(trainee.get());
             }
         }
-        return null;
-    }
-
-    @Override
-    public String generateCredentials(User user) {
-        return null;
+        throw new EntityNotFoundException(Trainee.class.getSimpleName(), credentialsDTO.getUsername());
     }
 
     @Override
@@ -96,27 +99,40 @@ public class TraineeServiceImpl implements TraineeService {
             userToUpdate.setIsActive(!user.getIsActive());
             return traineeDao.save(trainee.get());
         }
-        return null;
+        throw new EntityNotFoundException(Trainee.class.getSimpleName(), user.getUsername());
     }
     @Override
     public void delete(Trainee trainee) {
         traineeDao.delete(trainee);
     }
 
+    @CircuitBreaker(name = "TrainingScheduleBreaker")
     public void deleteByUsername(String username) {
-        traineeDao.deleteByUserUsername(username);
+        Optional<Trainee> trainee = selectByUsername(username);
+        if(trainee.isPresent()) {
+            trainee.get().getTrainings().stream()
+                    .filter(training -> training.getTrainingDate().after(Date.from(Instant.now())))
+                    .map(training -> scheduledTrainingMicroserviceClient.scheduleTraining(trainingService.setTrainingScheduleDetails(training, "DELETE")))
+                    .toList();
+            traineeDao.deleteByUserUsername(username);
+        }
+        throw new EntityNotFoundException(Trainee.class.getSimpleName(), username);
+
     }
 
     @Override
-    public List<Trainer> updateTrainersList(String username, List<Trainer> trainers) {
+    public List<Trainer> updateTrainersList(String username, List<String> trainers) {
         Optional<Trainee> foundTrainee = selectByUsername(username);
         if(foundTrainee.isPresent()){
             Trainee trainee = foundTrainee.get();
             List<Trainer> currentTrainers = trainee.getTrainers();
-            currentTrainers.addAll(trainers.stream().map(trainer -> trainerService.selectByUsername(trainer.getUser().getUsername())).filter(trainer -> trainer.isPresent() && !currentTrainers.contains(trainer.get()) ).map(Optional::get).toList());
+            currentTrainers.addAll(trainers.stream()
+                                            .map(trainer -> trainerService.selectByUsername(trainer))
+                                            .filter(trainer -> trainer.isPresent() && !currentTrainers.contains(trainer.get()))
+                                            .map(Optional::get).toList());
             traineeDao.save(trainee);
             return trainee.getTrainers();
         }
-        return null;
+        throw new EntityNotFoundException(Trainee.class.getSimpleName(), username);
     }
 }

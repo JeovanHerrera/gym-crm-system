@@ -10,5 +10,4 @@ public interface UserAuxService<T> {
     void deleteByUsername(String username);
     T toggleActiveStatus(User user);
     T updatePassword(CredentialsDTO credentialsDTO);
-    String generateCredentials(User user);
 }

@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,13 +13,11 @@ import java.util.List;
 public class AuthenticationServiceImpl implements AuthenticationService{
     @Autowired
     private AuthenticationManager authenticationManager;
-    @Autowired
-    private SecurityContext context;
 
     @Override
     public Authentication authenticateUser(String username, String password) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username,password));
-        context.setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         return authentication;
     }
 }

@@ -3,6 +3,8 @@ package com.jeovan.gymcrmsystem.services;
 import com.jeovan.gymcrmsystem.daos.TrainerDao;
 import com.jeovan.gymcrmsystem.daos.TrainingTypeDao;
 import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
+import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
+import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.TrainingType;
 import com.jeovan.gymcrmsystem.models.User;
@@ -73,12 +75,7 @@ public class TrainerServiceImpl implements TrainerService{
             user.setPassword(passwordEncoder.encode(credentialGeneratorService.generatePassword()));
             return trainerDao.save(trainer.get());
         }
-        return null;
-    }
-
-    @Override
-    public String generateCredentials(User user) {
-        return null;
+        throw new EntityNotFoundException(Trainer.class.getSimpleName(), credentialsDTO.getUsername());
     }
 
     @Override
@@ -89,7 +86,7 @@ public class TrainerServiceImpl implements TrainerService{
             userToUpdate.setIsActive(!user.getIsActive());
             return trainerDao.save(trainer.get());
         }
-        return  null;
+        throw new EntityNotFoundException(Trainer.class.getSimpleName(), user.getUsername());
     }
     @Override
     public void delete(Trainer trainer) {

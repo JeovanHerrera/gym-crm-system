@@ -59,7 +59,7 @@ public class TraineeController {
 
     @PutMapping(EndPoint.TRAINEE_USERNAME)
     @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINEE_LIST_OF_TRAINERS)
-    public ResponseEntity<List<Trainer>> updateTraineeListOfTrainers(@PathVariable String username, @RequestBody List<Trainer> trainers){
+    public ResponseEntity<List<Trainer>> updateTraineeListOfTrainers(@PathVariable String username, @RequestBody List<String> trainers){
         return ResponseEntity.of(Optional.of(traineeService.updateTrainersList(username, trainers)));
     }
 
