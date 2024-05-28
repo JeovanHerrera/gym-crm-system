@@ -7,15 +7,11 @@ import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
-import com.jeovan.gymcrmsystem.security.CustomUserDetail;
 import com.jeovan.gymcrmsystem.services.TraineeService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,14 +42,14 @@ public class TraineeController {
 
     @PutMapping(EndPoint.TRAINEE_RESET_PASSWORD)
     @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINEE_PASSWORD)
-    public HttpStatusCode changePassword(@RequestBody CredentialsDTO credentialsDTO){
+    public ResponseEntity<String> changePassword(@RequestBody CredentialsDTO credentialsDTO){
         traineeService.updatePassword(credentialsDTO);
-        return HttpStatus.OK;
+        return ResponseEntity.ok("OK");
     }
 
     @GetMapping(EndPoint.TRAINEE_USERNAME)
     @Operation(summary = SwaggerConstants.API_OPERATION_GET_TRAINEE)
-    public ResponseEntity<Trainee> getTraineeByUsername(@PathVariable String username, @AuthenticationPrincipal(errorOnInvalidType=true) CustomUserDetail userDetail){
+    public ResponseEntity<Trainee> getTraineeByUsername(@PathVariable String username){
         return ResponseEntity.of(traineeService.selectByUsername(username));
     }
 
@@ -65,9 +61,9 @@ public class TraineeController {
 
     @PatchMapping
     @Operation(summary = SwaggerConstants.API_OPERATION_UPDATE_TRAINEE_ACTIVE_STATUS)
-    public HttpStatusCode toggleActiveStatus(@RequestBody User user){
+    public ResponseEntity<String> toggleActiveStatus(@RequestBody User user){
         traineeService.toggleActiveStatus(user);
-        return HttpStatus.OK;
+        return ResponseEntity.ok("OK");
     }
 
     @PutMapping
@@ -78,9 +74,9 @@ public class TraineeController {
 
     @DeleteMapping(EndPoint.TRAINEE_USERNAME)
     @Operation(summary = SwaggerConstants.API_OPERATION_DELETE_TRAINEE)
-    public HttpStatusCode deleteTraineeProfile(@PathVariable String username){
+    public ResponseEntity<String> deleteTraineeProfile(@PathVariable String username){
         traineeService.deleteByUsername(username);
-        return HttpStatus.OK;
+        return ResponseEntity.ok("OK");
     }
 
 }

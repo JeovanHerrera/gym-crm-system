@@ -1,12 +1,11 @@
 package com.jeovan.gymcrmsystem.services;
 
 import com.jeovan.gymcrmsystem.daos.TrainingDao;
-import com.jeovan.gymcrmsystem.dtos.requests.TrainingDetailsDto;
 import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
+import com.jeovan.gymcrmsystem.helpers.TrainingScheduleHelper;
 import com.jeovan.gymcrmsystem.helpers.feing.ScheduledTrainingMicroserviceClient;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Training;
-import com.jeovan.gymcrmsystem.models.User;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,8 @@ public class TrainingServiceImpl implements TrainingService{
     private TrainerService trainerService;
     @Autowired
     private ScheduledTrainingMicroserviceClient scheduledTrainingMicroserviceClient;
+    @Autowired
+    private TrainingScheduleHelper trainingScheduleHelper;
 
     @Override
     public List<Training> getAll() {
@@ -52,7 +53,7 @@ public class TrainingServiceImpl implements TrainingService{
                         .orElseThrow(() -> new EntityNotFoundException(Trainee.class.getSimpleName(), training.getTrainee().getUser().getUsername()))
         );
 
-        scheduledTrainingMicroserviceClient.scheduleTraining(setTrainingScheduleDetails(training, "ADD")).getStatusCode();
+        scheduledTrainingMicroserviceClient.scheduleTraining(trainingScheduleHelper.setTrainingScheduleDetails(training, "ADD")).getStatusCode();
         log.info("Training added to microservice successfully");
         return trainingDao.save(training);
     }
@@ -66,18 +67,4 @@ public class TrainingServiceImpl implements TrainingService{
     public List<Training> getByUsernameAndCriteria(String username, Map<String, String> criteria) {
         return trainingDao.getByUsernameAndCriteria(username, criteria);
     }
-
-    public TrainingDetailsDto setTrainingScheduleDetails(Training training, String action){
-        TrainingDetailsDto trainingDetailsDto = new TrainingDetailsDto();
-        User user = training.getTrainer().getUser();
-        trainingDetailsDto.setUsername(user.getUsername());
-        trainingDetailsDto.setFirstName(user.getFirstName());
-        trainingDetailsDto.setLastName(user.getLastName());
-        trainingDetailsDto.setIsActive(user.getIsActive());
-        trainingDetailsDto.setTrainingDate(training.getTrainingDate()); // Sets current date.
-        trainingDetailsDto.setDuration(training.getTrainingDuration());
-        trainingDetailsDto.setActionType(action);
-        return trainingDetailsDto;
-    }
-
 }

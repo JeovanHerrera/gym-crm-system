@@ -5,6 +5,7 @@ import com.jeovan.gymcrmsystem.helpers.TraineeBuilder;
 import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
 import com.jeovan.gymcrmsystem.exceptions.InvalidEntityException;
 import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
+import com.jeovan.gymcrmsystem.helpers.TrainingScheduleHelper;
 import com.jeovan.gymcrmsystem.helpers.feing.ScheduledTrainingMicroserviceClient;
 import com.jeovan.gymcrmsystem.helpers.validations.TraineeValidator;
 import com.jeovan.gymcrmsystem.models.Trainee;
@@ -30,7 +31,7 @@ public class TraineeServiceImpl implements TraineeService {
     @Autowired
     private TrainerService trainerService;
     @Autowired
-    private TrainingService trainingService;
+    private TrainingScheduleHelper trainingScheduleHelper;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -112,7 +113,7 @@ public class TraineeServiceImpl implements TraineeService {
         if(trainee.isPresent()) {
             trainee.get().getTrainings().stream()
                     .filter(training -> training.getTrainingDate().after(Date.from(Instant.now())))
-                    .map(training -> scheduledTrainingMicroserviceClient.scheduleTraining(trainingService.setTrainingScheduleDetails(training, "DELETE")))
+                    .map(training -> scheduledTrainingMicroserviceClient.scheduleTraining(trainingScheduleHelper.setTrainingScheduleDetails(training, "DELETE")))
                     .toList();
             traineeDao.deleteByUserUsername(username);
         }
