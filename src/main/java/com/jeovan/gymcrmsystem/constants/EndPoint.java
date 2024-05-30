@@ -11,10 +11,11 @@ public class EndPoint {
 
     //*************TRAINER ENDPOINTS***************
     public static final String TRAINER = "/trainer";
-
     public static final String TRAINER_GET_ALL = "/all";
     public static final String TRAINER_USERNAME = "/{username}";
     public static final String TRAINER_RESET_PASSWORD = "/password";
+    public static final String TRAINER_HOURS_REQUEST = "/hours/{username}";
+    public static final String TRAINER_HOURS_RESULT = "/hours/result/{username}";
 
     //*************TRAINING ENDPOINTS***************
     public static final String TRAINING = "/training";

@@ -1,5 +1,6 @@
 package com.jeovan.gymcrmsystem.dtos.requests;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,13 +13,20 @@ import java.util.Date;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TrainingDetailsDto {
+public class TrainingDetailsDto{
 
+    @JsonProperty("username")
     private String username;
+    @JsonProperty("firstName")
     private String firstName;
+    @JsonProperty("lastName")
     private String lastName;
+    @JsonProperty("isActive")
     private Boolean isActive;
+    @JsonProperty("trainingDate")
     private Date trainingDate;
+    @JsonProperty("duration")
     private double duration;
+    @JsonProperty("actionType")
     private String actionType;
 }

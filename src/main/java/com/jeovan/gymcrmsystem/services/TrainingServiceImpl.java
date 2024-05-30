@@ -1,14 +1,18 @@
 package com.jeovan.gymcrmsystem.services;
 
+import com.jeovan.gymcrmsystem.constants.MessagingQueues;
+import com.jeovan.gymcrmsystem.constants.ScheduledTrainingActions;
 import com.jeovan.gymcrmsystem.daos.TrainingDao;
 import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
 import com.jeovan.gymcrmsystem.helpers.TrainingScheduleHelper;
-import com.jeovan.gymcrmsystem.helpers.feing.ScheduledTrainingMicroserviceClient;
 import com.jeovan.gymcrmsystem.models.Trainee;
+import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.Training;
+import com.jeovan.gymcrmsystem.models.TrainingType;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,20 +21,15 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class TrainingServiceImpl implements TrainingService{
 
-    @Autowired
-    private TrainingDao trainingDao;
-    @Autowired
-    private TrainingTypeService trainingTypeService;
-    @Autowired
-    private TraineeService traineeService;
-    @Autowired
-    private TrainerService trainerService;
-    @Autowired
-    private ScheduledTrainingMicroserviceClient scheduledTrainingMicroserviceClient;
-    @Autowired
-    private TrainingScheduleHelper trainingScheduleHelper;
+    private final TrainingDao trainingDao;
+    private final TrainingTypeService trainingTypeService;
+    private final TraineeService traineeService;
+    private final TrainerService trainerService;
+    private final TrainingScheduleHelper trainingScheduleHelper;
+    private final JmsTemplate jmsTemplate;
 
     @Override
     public List<Training> getAll() {
@@ -40,27 +39,28 @@ public class TrainingServiceImpl implements TrainingService{
     @Override
     @CircuitBreaker(name = "TrainingScheduleBreaker")
     public Training create(Training training) {
+        String trainerUsername = training.getTrainer().getUser().getUsername();
+        String traineeUsername = training.getTrainee().getUser().getUsername();
         training.setTrainingType(
                 trainingTypeService.getByTrainingTypeName(training.getTrainingType().getTrainingTypeName())
-                        .orElseThrow(() -> new RuntimeException("Training Type not found"))
+                        .orElseThrow(() -> new EntityNotFoundException(TrainingType.class.getSimpleName()))
         );
         training.setTrainer(
-                trainerService.selectByUsername(training.getTrainer().getUser().getUsername())
-                        .orElseThrow(() -> new EntityNotFoundException(Trainee.class.getSimpleName(), training.getTrainer().getUser().getUsername()))
+                trainerService.selectByUsername(trainerUsername)
+                        .orElseThrow(() -> new EntityNotFoundException(Trainer.class.getSimpleName(), trainerUsername))
         );
         training.setTrainee(
-                traineeService.selectByUsername(training.getTrainee().getUser().getUsername())
-                        .orElseThrow(() -> new EntityNotFoundException(Trainee.class.getSimpleName(), training.getTrainee().getUser().getUsername()))
+                traineeService.selectByUsername(traineeUsername)
+                        .orElseThrow(() -> new EntityNotFoundException(Trainee.class.getSimpleName(), traineeUsername))
         );
-
-        scheduledTrainingMicroserviceClient.scheduleTraining(trainingScheduleHelper.setTrainingScheduleDetails(training, "ADD")).getStatusCode();
+        jmsTemplate.convertAndSend(MessagingQueues.SCHEDULED_TRAINING_QUEUE, trainingScheduleHelper.setTrainingScheduleDetails(training, ScheduledTrainingActions.ADD));
         log.info("Training added to microservice successfully");
         return trainingDao.save(training);
     }
 
     @Override
     public Training select(UUID id) {
-        return trainingDao.findById(id).get();
+        return trainingDao.findById(id).orElseThrow(() -> new EntityNotFoundException(Training.class.getSimpleName()));
     }
 
     @Override

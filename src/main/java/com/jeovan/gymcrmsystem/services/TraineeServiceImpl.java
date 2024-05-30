@@ -1,18 +1,20 @@
 package com.jeovan.gymcrmsystem.services;
 
+import com.jeovan.gymcrmsystem.constants.MessagingQueues;
+import com.jeovan.gymcrmsystem.constants.ScheduledTrainingActions;
 import com.jeovan.gymcrmsystem.daos.TraineeDao;
 import com.jeovan.gymcrmsystem.helpers.TraineeBuilder;
 import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
 import com.jeovan.gymcrmsystem.exceptions.InvalidEntityException;
 import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
 import com.jeovan.gymcrmsystem.helpers.TrainingScheduleHelper;
-import com.jeovan.gymcrmsystem.helpers.feing.ScheduledTrainingMicroserviceClient;
 import com.jeovan.gymcrmsystem.helpers.validations.TraineeValidator;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,23 +25,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class TraineeServiceImpl implements TraineeService {
-    @Autowired
-    private TraineeDao traineeDao;
-    @Autowired
-    private CredentialGeneratorService credentialGeneratorService;
-    @Autowired
-    private TrainerService trainerService;
-    @Autowired
-    private TrainingScheduleHelper trainingScheduleHelper;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private TraineeValidator traineeValidator;
-    @Autowired
-    private TraineeBuilder traineeBuilder;
-    @Autowired
-    private ScheduledTrainingMicroserviceClient scheduledTrainingMicroserviceClient;
+
+    private final TraineeDao traineeDao;
+    private final TrainerService trainerService;
+    private final TrainingScheduleHelper trainingScheduleHelper;
+    private final PasswordEncoder passwordEncoder;
+    private final TraineeValidator traineeValidator;
+    private final TraineeBuilder traineeBuilder;
+    private final JmsTemplate jmsTemplate;
 
     @Override
     public List<Trainee> getAll() {
@@ -110,15 +105,15 @@ public class TraineeServiceImpl implements TraineeService {
     @CircuitBreaker(name = "TrainingScheduleBreaker")
     public void deleteByUsername(String username) {
         Optional<Trainee> trainee = selectByUsername(username);
-        if(trainee.isPresent()) {
-            trainee.get().getTrainings().stream()
-                    .filter(training -> training.getTrainingDate().after(Date.from(Instant.now())))
-                    .map(training -> scheduledTrainingMicroserviceClient.scheduleTraining(trainingScheduleHelper.setTrainingScheduleDetails(training, "DELETE")))
-                    .toList();
-            traineeDao.deleteByUserUsername(username);
+        if(trainee.isEmpty()) {
+            throw new EntityNotFoundException(Trainee.class.getSimpleName(), username);
         }
-        throw new EntityNotFoundException(Trainee.class.getSimpleName(), username);
-
+        trainee.get().getTrainings().stream()
+                .filter(training -> training.getTrainingDate().after(Date.from(Instant.now())))
+                .forEach(training -> jmsTemplate.convertAndSend(MessagingQueues.SCHEDULED_TRAINING_QUEUE,
+                                                                trainingScheduleHelper.setTrainingScheduleDetails(training,
+                                                                ScheduledTrainingActions.DELETE)));
+        traineeDao.deleteByUserUsername(username);
     }
 
     @Override
@@ -128,7 +123,7 @@ public class TraineeServiceImpl implements TraineeService {
             Trainee trainee = foundTrainee.get();
             List<Trainer> currentTrainers = trainee.getTrainers();
             currentTrainers.addAll(trainers.stream()
-                                            .map(trainer -> trainerService.selectByUsername(trainer))
+                                            .map(trainerService::selectByUsername)
                                             .filter(trainer -> trainer.isPresent() && !currentTrainers.contains(trainer.get()))
                                             .map(Optional::get).toList());
             traineeDao.save(trainee);

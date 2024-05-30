@@ -21,6 +21,8 @@ public class SwaggerConstants {
     public static final String API_OPERATION_UPDATE_TRAINER_ACTIVE_STATUS = "Update Trainer active status";
     public static final String API_OPERATION_UPDATE_TRAINER_PASSWORD = "Update Trainer password";
     public static final String API_OPERATION_GET_ALL_TRAINERS = "Get all Trainers";
+    public static final String API_OPERATION_TRAINER_HOURS_REQUEST = "Request trainee scheduled hours";
+    public static final String API_OPERATION_TRAINER_HOURS_RESULT = "Get trainee scheduled hours";
 
     //***************TRAINING ENDPOINTS********************
     public static final String API_OPERATION_CREATE_TRAINING = "Create training";

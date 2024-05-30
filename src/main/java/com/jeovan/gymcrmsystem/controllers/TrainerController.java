@@ -6,6 +6,7 @@ import com.jeovan.gymcrmsystem.constants.SwaggerConstants;
 import com.jeovan.gymcrmsystem.dtos.responses.CredentialsDTO;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
+import com.jeovan.gymcrmsystem.services.ScheduledTrainingService;
 import com.jeovan.gymcrmsystem.services.TrainerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ import static com.jeovan.gymcrmsystem.helpers.ResponseBuilder.buildCredentialRes
 public class TrainerController {
     private final TrainerService trainerService;
     private final TrainerCreationMetric trainerCreationMetric;
+    private final ScheduledTrainingService scheduledTrainingService;
+
     @GetMapping(EndPoint.TRAINER_GET_ALL)
     @Operation(summary = SwaggerConstants.API_OPERATION_GET_ALL_TRAINERS)
     public ResponseEntity<List<Trainer>> getAllUsers() {
@@ -63,5 +66,17 @@ public class TrainerController {
         return HttpStatus.OK;
     }
 
+    @GetMapping(EndPoint.TRAINER_HOURS_REQUEST)
+    @Operation(summary = SwaggerConstants.API_OPERATION_TRAINER_HOURS_REQUEST)
+    public ResponseEntity<String> requestTrainerScheduledHours(@PathVariable String username, @RequestParam String yearMonth){
+        scheduledTrainingService.sendScheduledHoursRequest(username, yearMonth);
+        return ResponseEntity.accepted().body("Request accepted. Please check back later.");
+    }
+
+    @GetMapping(EndPoint.TRAINER_HOURS_RESULT)
+    @Operation(summary = SwaggerConstants.API_OPERATION_TRAINER_HOURS_RESULT)
+    public ResponseEntity<Double> getTrainerScheduledHours(@PathVariable String username, @RequestParam String yearMonth){
+        return ResponseEntity.ok(scheduledTrainingService.getScheduledHoursResult(username, yearMonth));
+    }
 
 }
