@@ -76,7 +76,6 @@ public class TrainerController {
     @GetMapping(EndPoint.TRAINER_HOURS_RESULT)
     @Operation(summary = SwaggerConstants.API_OPERATION_TRAINER_HOURS_RESULT)
     public ResponseEntity<Double> getTrainerScheduledHours(@PathVariable String username, @RequestParam String yearMonth){
-        return ResponseEntity.ok(scheduledTrainingService.getScheduledHoursResult(username, yearMonth));
+        return ResponseEntity.of(scheduledTrainingService.getScheduledHoursResult(username, yearMonth));
     }
-
 }

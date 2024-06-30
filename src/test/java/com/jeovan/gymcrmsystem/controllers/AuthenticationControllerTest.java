@@ -63,6 +63,6 @@ class AuthenticationControllerTest {
         CredentialsDTO credentialsDTO = new CredentialsDTO("string.string", "password12", "");
         mockMvc.perform(post(EndPoint.LOGIN).content(objectMapper.writeValueAsString(credentialsDTO)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.[0]").value("ffdaadsdsd"));
+                .andExpect(jsonPath("$.data-local.sql[0]").value("ffdaadsdsd"));
     }
 }

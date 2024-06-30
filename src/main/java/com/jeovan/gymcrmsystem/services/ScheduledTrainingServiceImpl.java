@@ -9,6 +9,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ScheduledTrainingServiceImpl implements ScheduledTrainingService {
@@ -30,7 +31,7 @@ public class ScheduledTrainingServiceImpl implements ScheduledTrainingService {
     }
 
     @Override
-    public double getScheduledHoursResult(String username, String yearMonth) {
-        return workedHoursResults.getOrDefault(username, Maps.newConcurrentMap()).getOrDefault(yearMonth, 0.0);
+    public Optional<Double> getScheduledHoursResult(String username, String yearMonth) {
+        return Optional.ofNullable(workedHoursResults.getOrDefault(username, Maps.newConcurrentMap()).get(yearMonth));
     }
 }

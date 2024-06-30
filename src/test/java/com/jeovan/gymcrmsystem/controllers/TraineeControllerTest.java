@@ -10,6 +10,7 @@ import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.User;
 import com.jeovan.gymcrmsystem.security.*;
 import com.jeovan.gymcrmsystem.services.TraineeServiceImpl;
+import io.cucumber.spring.CucumberContextConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
