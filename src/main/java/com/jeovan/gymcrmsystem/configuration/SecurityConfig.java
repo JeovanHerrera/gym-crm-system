@@ -46,6 +46,7 @@ public class SecurityConfig {
 
     public static final String ALL_HEADERS = "*";
     public static final String SWAGGER_UI = "/swagger-ui/**";
+    public static final String ACTUATOR = "/actuator/**";
     public static final String SWAGGER_VERSION = "/v3/**";
     public static final String REGISTER_CORS_CONFIGURATION_PATTERN = "/**";
     @Bean
@@ -77,6 +78,8 @@ public class SecurityConfig {
                         .requestMatchers(EndPoint.LOGIN)
                         .permitAll()
                         .requestMatchers(SWAGGER_UI, SWAGGER_VERSION)
+                        .permitAll()
+                        .requestMatchers(ACTUATOR)
                         .permitAll()
                         .anyRequest()
                         .authenticated())

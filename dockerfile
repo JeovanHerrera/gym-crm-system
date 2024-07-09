@@ -21,11 +21,7 @@ FROM openjdk:17-jdk-slim
 
 RUN apt-get update && apt-get install -y netcat
 
-# Add the wait script to the image
-ADD https://raw.githubusercontent.com/eficode/wait-for/master/wait-for /wait-for
-RUN chmod +x /wait-for
-
-EXPOSE 8080
+EXPOSE 8081
 
 # Set the working directory in the runtime container to /app
 WORKDIR /app
@@ -34,5 +30,5 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar /app
 
 # execute the application
-ENTRYPOINT [ "/bin/sh", "-c", "/wait-for mysql:3306 -- java -jar /app/gymcrmsystem-0.0.1-SNAPSHOT.jar" ]
-# CMD ["java", "-jar", "/app/gymcrmsystem-0.0.1-SNAPSHOT.jar"]
+#ENTRYPOINT [ "/bin/sh", "-c", "/wait-for mysql:3306 -- java -jar /app/gymcrmsystem-0.0.1-SNAPSHOT.jar" ]
+CMD ["java", "-jar", "/app/gymcrmsystem-0.0.1-SNAPSHOT.jar"]
