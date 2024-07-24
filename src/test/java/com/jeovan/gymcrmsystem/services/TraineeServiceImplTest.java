@@ -1,5 +1,6 @@
 package com.jeovan.gymcrmsystem.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.jeovan.gymcrmsystem.daos.TraineeDao;
 import com.jeovan.gymcrmsystem.helpers.TraineeBuilder;
 import com.jeovan.gymcrmsystem.exceptions.InvalidEntityException;
@@ -68,7 +69,7 @@ class TraineeServiceImplTest {
     }
 
     @Test
-    void Should_ReturnANewTrainee_When_ValidationSucceeds() {
+    void Should_ReturnANewTrainee_When_ValidationSucceeds() throws JsonProcessingException {
         when(traineeValidator.checkForCreationSuccessful(TRAINEE_FOR_CREATION)).thenReturn(true);
         when(mockDao.save(any(Trainee.class))).thenReturn(TRAINEE1);
         assertEquals(TRAINEE1, service.create(TRAINEE_FOR_CREATION));

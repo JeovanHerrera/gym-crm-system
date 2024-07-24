@@ -1,20 +1,26 @@
 package com.jeovan.gymcrmsystem.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jeovan.gymcrmsystem.constants.MessagingQueues;
 import com.jeovan.gymcrmsystem.constants.ScheduledTrainingActions;
 import com.jeovan.gymcrmsystem.daos.TrainingDao;
+import com.jeovan.gymcrmsystem.dtos.requests.TrainingDetailsDto;
 import com.jeovan.gymcrmsystem.exceptions.EntityNotFoundException;
 import com.jeovan.gymcrmsystem.helpers.TrainingScheduleHelper;
 import com.jeovan.gymcrmsystem.models.Trainee;
 import com.jeovan.gymcrmsystem.models.Trainer;
 import com.jeovan.gymcrmsystem.models.Training;
 import com.jeovan.gymcrmsystem.models.TrainingType;
+import io.awspring.cloud.sqs.operations.SqsTemplate;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -30,6 +36,8 @@ public class TrainingServiceImpl implements TrainingService{
     private final TrainerService trainerService;
     private final TrainingScheduleHelper trainingScheduleHelper;
     private final JmsTemplate jmsTemplate;
+    private final SqsTemplate sqsTemplate;
+    private final ObjectMapper mapper;
 
     @Override
     public List<Training> getAll() {
@@ -53,8 +61,14 @@ public class TrainingServiceImpl implements TrainingService{
                 traineeService.selectByUsername(traineeUsername)
                         .orElseThrow(() -> new EntityNotFoundException(Trainee.class.getSimpleName(), traineeUsername))
         );
-        jmsTemplate.convertAndSend(MessagingQueues.SCHEDULED_TRAINING_QUEUE, trainingScheduleHelper.setTrainingScheduleDetails(training, ScheduledTrainingActions.ADD));
-        log.info("Training added to microservice successfully");
+        //jmsTemplate.convertAndSend(MessagingQueues.SCHEDULED_TRAINING_QUEUE, trainingScheduleHelper.setTrainingScheduleDetails(training, ScheduledTrainingActions.ADD));
+        try {
+            var message = mapper.writeValueAsString(trainingScheduleHelper.setTrainingScheduleDetails(training, ScheduledTrainingActions.ADD));
+            sqsTemplate.send(to -> to.queue(MessagingQueues.SCHEDULED_TRAINING_QUEUE).payload(message));
+            log.info("Training added to microservice successfully");
+        }catch (JsonProcessingException e){
+            log.error("Unable to add Training to microservice");
+        }
         return trainingDao.save(training);
     }
 
